@@ -15,7 +15,7 @@ sudo make benchmark
 sudo make validate
 cd ..
 # change this to where your npheap is.
-sudo insmod NPHeap/kernel_module/npheap.ko
+sudo insmod NPHeap/npheap.ko
 sudo chmod 777 /dev/npheap
 sudo insmod kernel_module/tnpheap.ko
 sudo chmod 777 /dev/tnpheap
