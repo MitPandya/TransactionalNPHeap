@@ -60,6 +60,7 @@ __u64 tnpheap_start_tx(struct tnpheap_cmd __user *user_cmd)
 {
     struct tnpheap_cmd cmd;
     __u64 ret=0;
+    printk(KERN_INFO "in _core.c file");
     if (copy_from_user(&cmd, user_cmd, sizeof(cmd)))
     {
         return -1 ;

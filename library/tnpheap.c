@@ -31,6 +31,7 @@ void *tnpheap_alloc(int npheap_dev, int tnpheap_dev, __u64 offset, __u64 size)
 
 __u64 tnpheap_start_tx(int npheap_dev, int tnpheap_dev)
 {
+	printk(KERN_INFO "in .c file");
     return 0;
 }
 
