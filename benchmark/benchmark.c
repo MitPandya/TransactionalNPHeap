@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <sys/syscall.h>
 #include <time.h>
+#include <npheap.h>
 #include <tnpheap.h>
 #include <fcntl.h>
 #include <sys/mman.h>
