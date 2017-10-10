@@ -1,4 +1,6 @@
 #include <npheap/tnpheap_ioctl.h>
+#include <npheap/npheap.h>
+#include <npheap.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/ioctl.h>
