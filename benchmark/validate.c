@@ -6,6 +6,7 @@
 #include <sys/mman.h>
 #include <unistd.h>
 #include <string.h>
+#include <linux/types.h>
 
 int main(int argc, char *argv[])
 {

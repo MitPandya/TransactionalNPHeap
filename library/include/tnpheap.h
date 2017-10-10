@@ -3,6 +3,7 @@ extern "C" {
 #endif
 #include <unistd.h>
 #include <signal.h>
+#include <linux/types.h>
 __u64 current_tx;
 __u64 tnpheap_start_tx(int npheap_dev, int tnpheap_dev);
 int tnpheap_commit(int npheap_dev, int tnpheap_dev);
