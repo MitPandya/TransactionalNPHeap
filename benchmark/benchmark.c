@@ -10,6 +10,7 @@
 #include <string.h>
 #include <sys/wait.h>
 #include <malloc.h>
+#include <linux/types.h>
 
 struct data_array_element
 {
