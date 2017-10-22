@@ -31,19 +31,20 @@ void *tnpheap_alloc(int npheap_dev, int tnpheap_dev, __u64 offset, __u64 size)
     __u64 aligned_size = ((size + getpagesize() - 1) / getpagesize())*getpagesize();
 
     //creating a buffer memory for transactions
-    buffer = (char*) mmap(0,aligned_size,PROT_READ|PROT_WRITE,MAP_SHARED,npheap_dev,offset*getpagesize());
+    buffer = (char*)malloc(sizeof());
 
-    return mmap(0,aligned_size,PROT_READ|PROT_WRITE,MAP_SHARED,tnpheap_dev,offset*getpagesize());
+    return npheap_alloc(npheap_dev, offset, aligned_size);
 }
 
 __u64 tnpheap_start_tx(int npheap_dev, int tnpheap_dev)
 {
 	struct tnpheap_cmd cmd;
-	cmd.offset = npheap_dev;
+	//cmd.offset = npheap_dev;
 	return tnpheap_ioctl(tnpheap_dev, TNPHEAP_IOCTL_START_TX, &cmd);
 }
 
 int tnpheap_commit(int npheap_dev, int tnpheap_dev)
 {
-    return 0;
+	struct tnpheap_cmd cmd;
+	return tnpheap_commit(tnpheap_dev, TNPHEAP_IOCTL_COMMIT, &cmd);
 }

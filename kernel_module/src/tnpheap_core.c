@@ -48,11 +48,11 @@
 
 struct miscdevice tnpheap_dev;
 
-int global_version = 0;
+__u64 global_version = 0;
 
 struct linked_list{
     struct list_head list; /* kernel's list structure */
-    int version;
+    __u64 version;
     unsigned long phys_addr;
     long offset;
 };
