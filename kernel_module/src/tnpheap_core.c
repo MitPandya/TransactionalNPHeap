@@ -43,8 +43,50 @@
 #include <linux/poll.h>
 #include <linux/mutex.h>
 #include <linux/time.h>
+#include <linux/list.h>
+
 
 struct miscdevice tnpheap_dev;
+
+int global_version = 0;
+
+struct linked_list{
+    struct list_head list; /* kernel's list structure */
+    int version;
+    unsigned long phys_addr;
+    long offset;
+};
+
+struct linked_list linkedList;
+
+int add_node(long offset){
+
+    struct linked_list *tmp;
+    /* adding elements to list */
+    tmp= (struct linked_list *)kmalloc(sizeof(struct linked_list), GFP_KERNEL);
+    global_version++;
+    tmp->version = global_version;
+    tmp->offset = offset;
+    /* add the new item 'tmp' to the list of items in linked_list */
+    list_add(&(tmp->list), &(linkedList.list));
+    return 1;
+}
+
+struct linked_list* find_node(struct tnpheap_cmd cmd) {
+    struct linked_list *tmp;
+    struct list_head *pos, *q;
+    // traverse through list and lock the current unocked node
+    // https://isis.poly.edu/kulesh/stuff/src/klist/
+    list_for_each_safe(pos, q, &linkedList.list) {
+        tmp = list_entry(pos, struct linked_list, list);
+        if((cmd.offset >> PAGE_SHIFT) == tmp->offset) {
+            return tmp;
+        }
+    }
+    return NULL;
+}
+
+
 
 __u64 tnpheap_get_version(struct tnpheap_cmd __user *user_cmd)
 {
@@ -112,8 +154,10 @@ static int __init tnpheap_module_init(void)
     int ret = 0;
     if ((ret = misc_register(&tnpheap_dev)))
         printk(KERN_ERR "Unable to register \"npheap\" misc device\n");
-    else
+    else{
         printk(KERN_ERR "\"npheap\" misc device installed\n");
+        INIT_LIST_HEAD(&linkedList.list);
+    }
     return 1;
 }
 
@@ -128,3 +172,4 @@ MODULE_LICENSE("GPL");
 MODULE_VERSION("0.1");
 module_init(tnpheap_module_init);
 module_exit(tnpheap_module_exit);
+
