@@ -11,7 +11,75 @@
 #include <malloc.h>
 #include <string.h>
 
-char* buffer;
+struct transaction_node {
+    __u64 version;
+    long offset;
+    char* buffer;
+    transaction_node* next;
+};
+
+struct transaction_node *head;
+
+__u64 global_version = 0;
+
+int insert_list(__u64 version, long offset) {
+    if(head == NULL) {
+        head = (struct transaction_node*)malloc(sizeof(struct transaction_node));
+        if(head == NULL){
+            fprintf(stdout,"error in malloc, node creation failed\n");
+            return -1;
+        }
+        head->offset = offset;
+        head->version = version;
+        head->next = NULL;
+        return 1;
+    }
+
+    struct transaction_node* tmp = head;
+
+    while(tmp->next != NULL) {
+        tmp = tmp->next;
+    }
+
+    struct transaction_node* next_node = (struct transaction_node*)malloc(sizeof(struct transaction_node));
+    if(next_node == NULL){
+        fprintf(stdout,"error in malloc, node creation failed\n");
+        return -1;
+    }
+    next_node->offset = offset;
+    next_node->version = version;
+    next_node->next = NULL;
+
+    return 1;
+}
+
+struct transaction_node* find_list(long offset) {
+    if(head == NULL){
+        fprintf(stdout,"list is empty, inside find\n");
+    }
+
+    struct transaction_node* tmp = head;
+    while(tmp != NULL) {
+        if(tmp->offset == offset) {
+            fprintf(stdout, "found node %x\n", tmp->offset);
+            return tmp;
+        }
+        tmp = tmp->next;
+    }
+    //failed - not found
+    return NULL;
+}
+
+void print_list() {
+    if(head == NULL){
+        fprintf(stdout,"list is empty, inside print_list\n");
+    }
+    struct transaction_node* tmp = head;
+    while(tmp != NULL) {
+        fprintf(stdout, "node->version: %x, node->offset: %x\n", tmp->version, tmp->offset);
+        tmp = tmp->next;
+    }
+}
 
 __u64 tnpheap_get_version(int npheap_dev, int tnpheap_dev, __u64 offset)
 {
@@ -29,15 +97,14 @@ int tnpheap_handler(int sig, siginfo_t *si)
 void *tnpheap_alloc(int npheap_dev, int tnpheap_dev, __u64 offset, __u64 size)
 {
     __u64 aligned_size = ((size + getpagesize() - 1) / getpagesize())*getpagesize();
-
-    //creating a buffer memory for transactions
-    //buffer = (char*)malloc(sizeof());
-
     return npheap_alloc(npheap_dev, offset, aligned_size);
 }
 
 __u64 tnpheap_start_tx(int npheap_dev, int tnpheap_dev)
 {
+    insert_list(global_version++, 10);
+    insert_list(global_version++, 11);
+    print_list();
 	struct tnpheap_cmd cmd;
 	//cmd.offset = npheap_dev;
 	return 0;
