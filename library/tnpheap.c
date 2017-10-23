@@ -80,14 +80,13 @@ void print_list() {
     }
     struct transaction_node* tmp = head;
     while(tmp != NULL) {
-        fprintf(stdout, "node->version: %x, node->offset: %zu\n", tmp->version, tmp->offset);
+        fprintf(stdout, "node->version: %zu, node->offset: %zu\n", tmp->version, tmp->offset);
         tmp = tmp->next;
     }
 }
 
 __u64 tnpheap_get_version(int npheap_dev, int tnpheap_dev, __u64 offset)
 {
-    fprintf(stdout,"inside get version\n");
     struct tnpheap_cmd cmd;
     __u64 version = ioctl(tnpheap_dev, TNPHEAP_IOCTL_GET_VERSION, &cmd);
     fprintf(stdout,"Offest is %zu and version is %zu\n",offset,version);
@@ -112,7 +111,7 @@ __u64 tnpheap_start_tx(int npheap_dev, int tnpheap_dev)
 {	
     struct tnpheap_cmd cmd;
 	__u64 offset = ioctl(tnpheap_dev, TNPHEAP_IOCTL_START_TX, &cmd);
-    fprintf(stdout,"Node added %zu \n", offset);
+    //fprintf(stdout,"Node added %zu \n", offset);
     __u64 version = tnpheap_get_version(npheap_dev, tnpheap_dev, offset);
 
     if(offset == -1 || version == -1){
