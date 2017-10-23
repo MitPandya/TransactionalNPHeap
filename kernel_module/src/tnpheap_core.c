@@ -99,7 +99,7 @@ __u64 tnpheap_get_version(struct tnpheap_cmd __user *user_cmd)
     if(node == NULL){
         return -1;
     }
-    return node.version;
+    return node->version;
 }
 
 __u64 tnpheap_start_tx(struct tnpheap_cmd __user *user_cmd)

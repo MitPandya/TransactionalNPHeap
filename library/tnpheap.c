@@ -109,7 +109,7 @@ __u64 tnpheap_start_tx(int npheap_dev, int tnpheap_dev)
 {	
     struct tnpheap_cmd cmd;
 	__u64 offset = ioctl(tnpheap_dev, TNPHEAP_IOCTL_START_TX, &cmd);
-    fprintf(stdout,"Node added %zu \n", res);
+    fprintf(stdout,"Node added %zu \n", offset);
     tnpheap_get_version(npheap_dev, tnpheap_dev, offset);
 	return 0;
 }
