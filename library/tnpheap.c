@@ -80,7 +80,7 @@ void print_list() {
     }
     struct transaction_node* tmp = head;
     while(tmp != NULL) {
-        fprintf(stdout, "node->version: %x, node->offset: %x\n", tmp->version, tmp->offset);
+        fprintf(stdout, "node->version: %x, node->offset: %zu\n", tmp->version, tmp->offset);
         tmp = tmp->next;
     }
 }
