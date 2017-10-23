@@ -87,6 +87,7 @@ void print_list() {
 
 __u64 tnpheap_get_version(int npheap_dev, int tnpheap_dev, __u64 offset)
 {
+    __u64 version = ioctl(tnpheap_dev, TNPHEAP_IOCTL_GET_VERSION, &cmd);
     return 0;
 }
 
@@ -107,8 +108,9 @@ void *tnpheap_alloc(int npheap_dev, int tnpheap_dev, __u64 offset, __u64 size)
 __u64 tnpheap_start_tx(int npheap_dev, int tnpheap_dev)
 {	
     struct tnpheap_cmd cmd;
-	__u64 version = ioctl(tnpheap_dev, TNPHEAP_IOCTL_START_TX, &cmd);
-    fprintf(stdout,"version is %zu \n", version);
+	__u64 offset = ioctl(tnpheap_dev, TNPHEAP_IOCTL_START_TX, &cmd);
+    fprintf(stdout,"Node added %zu \n", res);
+    tnpheap_get_version(npheap_dev, tnpheap_dev, offset);
 	return 0;
 }
 

@@ -48,7 +48,7 @@
 
 struct miscdevice tnpheap_dev;
 
-__u64 global_version = 0;
+__u64 global_version = 10;
 
 struct linked_list{
     struct list_head list; /* kernel's list structure */
@@ -82,6 +82,12 @@ struct linked_list* find_node(__u64 offset) {
             return tmp;
         }
     }
+    struct linked_list *node = find_node(cmd.offset);
+    // creae new node
+    if(node == NULL){
+        add_node(cmd.offset);
+    }
+    return 0;
     return NULL;
 }
 
@@ -93,8 +99,13 @@ __u64 tnpheap_get_version(struct tnpheap_cmd __user *user_cmd)
     if (copy_from_user(&cmd, user_cmd, sizeof(cmd)))
     {
         return -1 ;
-    }    
-    return 0;
+    }
+    struct linked_list *node = find_node(cmd.offset);
+
+    if(node == NULL){
+        return -1;
+    }
+    return node.version;
 }
 
 __u64 tnpheap_start_tx(struct tnpheap_cmd __user *user_cmd)
@@ -111,7 +122,7 @@ __u64 tnpheap_start_tx(struct tnpheap_cmd __user *user_cmd)
     if(node == NULL){
         add_node(cmd.offset);
     }
-    return cmd.version;
+    return cmd.offset;
 }
 
 __u64 tnpheap_commit(struct tnpheap_cmd __user *user_cmd)
