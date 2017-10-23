@@ -31,7 +31,7 @@ void *tnpheap_alloc(int npheap_dev, int tnpheap_dev, __u64 offset, __u64 size)
     __u64 aligned_size = ((size + getpagesize() - 1) / getpagesize())*getpagesize();
 
     //creating a buffer memory for transactions
-    buffer = (char*)malloc(sizeof());
+    //buffer = (char*)malloc(sizeof());
 
     return npheap_alloc(npheap_dev, offset, aligned_size);
 }
