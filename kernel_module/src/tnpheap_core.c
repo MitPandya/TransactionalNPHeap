@@ -82,12 +82,6 @@ struct linked_list* find_node(__u64 offset) {
             return tmp;
         }
     }
-    struct linked_list *node = find_node(cmd.offset);
-    // creae new node
-    if(node == NULL){
-        add_node(cmd.offset);
-    }
-    return 0;
     return NULL;
 }
 
