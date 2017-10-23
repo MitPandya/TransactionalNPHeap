@@ -109,8 +109,9 @@ __u64 tnpheap_start_tx(int npheap_dev, int tnpheap_dev)
     insert_list(++global_version, 10);
     insert_list(++global_version, 11);
     print_list();
-	struct tnpheap_cmd cmd;
-	//cmd.offset = npheap_dev;
+	
+    struct tnpheap_cmd cmd;
+	ioctl(npheap_dev, TNPHEAP_IOCTL_START_TX, &cmd);
 	return 0;
 }
 
