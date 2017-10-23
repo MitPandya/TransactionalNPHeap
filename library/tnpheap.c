@@ -40,11 +40,11 @@ __u64 tnpheap_start_tx(int npheap_dev, int tnpheap_dev)
 {
 	struct tnpheap_cmd cmd;
 	//cmd.offset = npheap_dev;
-	return tnpheap_ioctl(tnpheap_dev, TNPHEAP_IOCTL_START_TX, &cmd);
+	return 0;
 }
 
 int tnpheap_commit(int npheap_dev, int tnpheap_dev)
 {
 	struct tnpheap_cmd cmd;
-	return tnpheap_commit(tnpheap_dev, TNPHEAP_IOCTL_COMMIT, &cmd);
+	return 0;
 }
