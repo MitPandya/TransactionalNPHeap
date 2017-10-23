@@ -87,7 +87,9 @@ void print_list() {
 
 __u64 tnpheap_get_version(int npheap_dev, int tnpheap_dev, __u64 offset)
 {
+    struct tnpheap_cmd cmd;
     __u64 version = ioctl(tnpheap_dev, TNPHEAP_IOCTL_GET_VERSION, &cmd);
+    fprintf(stdout,"Offest is %zu and version is %zu\n",offset,version);
     return 0;
 }
 
