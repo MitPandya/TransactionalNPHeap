@@ -89,6 +89,7 @@ struct linked_list* find_node(__u64 offset) {
 
 __u64 tnpheap_get_version(struct tnpheap_cmd __user *user_cmd)
 {
+    printk("inside get version\n");
     struct tnpheap_cmd cmd;
     if (copy_from_user(&cmd, user_cmd, sizeof(cmd)))
     {
