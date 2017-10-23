@@ -15,7 +15,7 @@ struct transaction_node {
     __u64 version;
     long offset;
     char* buffer;
-    transaction_node* next;
+    struct transaction_node* next;
 };
 
 struct transaction_node *head;
@@ -31,6 +31,7 @@ int insert_list(__u64 version, long offset) {
         }
         head->offset = offset;
         head->version = version;
+        head->buffer = NULL;
         head->next = NULL;
         return 1;
     }
@@ -48,7 +49,10 @@ int insert_list(__u64 version, long offset) {
     }
     next_node->offset = offset;
     next_node->version = version;
+    next_node->buffer = NULL;
     next_node->next = NULL;
+
+    tmp->next = next_node;
 
     return 1;
 }
@@ -102,8 +106,8 @@ void *tnpheap_alloc(int npheap_dev, int tnpheap_dev, __u64 offset, __u64 size)
 
 __u64 tnpheap_start_tx(int npheap_dev, int tnpheap_dev)
 {
-    insert_list(global_version++, 10);
-    insert_list(global_version++, 11);
+    insert_list(++global_version, 10);
+    insert_list(++global_version, 11);
     print_list();
 	struct tnpheap_cmd cmd;
 	//cmd.offset = npheap_dev;
