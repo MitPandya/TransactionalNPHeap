@@ -105,13 +105,10 @@ void *tnpheap_alloc(int npheap_dev, int tnpheap_dev, __u64 offset, __u64 size)
 }
 
 __u64 tnpheap_start_tx(int npheap_dev, int tnpheap_dev)
-{
-    insert_list(++global_version, 10);
-    insert_list(++global_version, 11);
-    print_list();
-	
+{	
     struct tnpheap_cmd cmd;
-	ioctl(npheap_dev, TNPHEAP_IOCTL_START_TX, &cmd);
+	__u64 version = ioctl(tnpheap_dev, TNPHEAP_IOCTL_START_TX, &cmd);
+    fprintf(stdout,"version is %zu \n", version);
 	return 0;
 }
 

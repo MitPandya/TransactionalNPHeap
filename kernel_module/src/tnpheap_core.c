@@ -53,13 +53,12 @@ __u64 global_version = 0;
 struct linked_list{
     struct list_head list; /* kernel's list structure */
     __u64 version;
-    unsigned long phys_addr;
-    long offset;
+    __u64 offset;
 };
 
 struct linked_list linkedList;
 
-int add_node(long offset){
+int add_node(__u64 offset){
 
     struct linked_list *tmp;
     /* adding elements to list */
@@ -72,14 +71,14 @@ int add_node(long offset){
     return 1;
 }
 
-struct linked_list* find_node(struct tnpheap_cmd cmd) {
+struct linked_list* find_node(__u64 offset) {
     struct linked_list *tmp;
     struct list_head *pos, *q;
     // traverse through list and lock the current unocked node
     // https://isis.poly.edu/kulesh/stuff/src/klist/
     list_for_each_safe(pos, q, &linkedList.list) {
         tmp = list_entry(pos, struct linked_list, list);
-        if((cmd.offset >> PAGE_SHIFT) == tmp->offset) {
+        if(offset == tmp->offset) {
             return tmp;
         }
     }
@@ -105,8 +104,14 @@ __u64 tnpheap_start_tx(struct tnpheap_cmd __user *user_cmd)
     if (copy_from_user(&cmd, user_cmd, sizeof(cmd)))
     {
         return -1 ;
-    }    
-    return ret;
+    }
+    printk(KERN_INFO "starting transaction for offset %zu\n",cmd.offset);
+    struct linked_list *node = find_node(cmd.offset);
+    // creae new node
+    if(node == NULL){
+        add_node(cmd.offset);
+    }
+    return cmd.version;
 }
 
 __u64 tnpheap_commit(struct tnpheap_cmd __user *user_cmd)
