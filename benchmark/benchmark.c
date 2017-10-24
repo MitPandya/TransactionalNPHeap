@@ -107,6 +107,7 @@ int main(int argc, char *argv[])
         {
             size = npheap_getsize(npheap_dev,i);
             mapped_data = (char *)tnpheap_alloc(npheap_dev,tnpheap_dev,i,size);
+            fprintf(stdout,"mapped data %s\n",mapped_data);
             if(!mapped_data)
             {
                 fprintf(stderr,"Failed in npheap_alloc()\n");
