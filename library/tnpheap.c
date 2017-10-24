@@ -38,6 +38,7 @@ int insert_list(__u64 version, __u64 offset) {
         head->kmem_ptr = NULL;
         head->size = 0;
 
+        fprintf(stdout,"inserted head, offset is %x\n",head->offset);
         return 1;
     }
 
@@ -60,6 +61,7 @@ int insert_list(__u64 version, __u64 offset) {
     next_node->size = 0;
 
     tmp->next = next_node;
+    fprintf(stdout,"inserted node, offset is %x\n",next_node->offset);
 
     return 1;
 }
