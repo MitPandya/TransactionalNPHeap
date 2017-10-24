@@ -124,9 +124,23 @@ __u64 tnpheap_commit(struct tnpheap_cmd __user *user_cmd)
     __u64 ret=0;
     if (copy_from_user(&cmd, user_cmd, sizeof(cmd)))
     {
-        return -1 ;
+        return 1;
     }
-    return ret;
+    struct linked_list* node = find_node(cmd.offset);
+    if(node == NULL) {
+        //node not found
+        printk(KERN_ERR "Node not found! %zu\n", cmd.offset);
+        return 1;
+    }
+    if(cmd.version == node->version) {
+        //version matches, write to kernel memory
+        return 0;
+    } else {
+        //update the version number
+        return 1;
+    }
+
+    return 1;
 }
 
 
