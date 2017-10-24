@@ -67,6 +67,7 @@ int insert_list(__u64 version, __u64 offset) {
 }
 
 struct transaction_node* find_list(__u64 offset) {
+    print_list();
     if(head == NULL){
         fprintf(stdout,"list is empty, inside find\n");
     }
@@ -97,7 +98,17 @@ void print_list() {
 __u64 tnpheap_get_version(int npheap_dev, int tnpheap_dev, __u64 offset)
 {
     struct tnpheap_cmd cmd;
+    cmd.offset = offset;
+
     __u64 version = ioctl(tnpheap_dev, TNPHEAP_IOCTL_GET_VERSION, &cmd);
+
+    struct transaction_node *tmp = find_list(offset);
+    
+    if(tmp == NULL){
+        insert_list(version, offset);
+    }
+    print_list();
+    
     fprintf(stdout,"Offest is %zu and version is %zu\n",offset,version);
     return version;
 }
@@ -145,20 +156,9 @@ void *tnpheap_alloc(int npheap_dev, int tnpheap_dev, __u64 offset, __u64 size)
 __u64 tnpheap_start_tx(int npheap_dev, int tnpheap_dev)
 {	
     struct tnpheap_cmd cmd;
-	__u64 offset = ioctl(tnpheap_dev, TNPHEAP_IOCTL_START_TX, &cmd);
-    //fprintf(stdout,"Node added %zu \n", offset);
-    __u64 version = tnpheap_get_version(npheap_dev, tnpheap_dev, offset);
+	__u64 transaction_id = ioctl(tnpheap_dev, TNPHEAP_IOCTL_START_TX, &cmd);
 
-    if(offset == -1 || version == -1){
-        fprintf(stderr,"Error starting transaction");
-        return -1;
-    }
-    struct transaction_node *tmp = find_list(offset);
-    if(tmp == NULL){
-        insert_list(version, offset);
-    }
-    print_list();
-	return 0;
+	return transaction_id;
 }
 
 int tnpheap_commit(int npheap_dev, int tnpheap_dev)

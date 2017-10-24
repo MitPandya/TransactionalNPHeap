@@ -48,7 +48,8 @@
 
 struct miscdevice tnpheap_dev;
 
-__u64 global_version = 10;
+__u64 transaction_id = 0;
+__u64 global_version = 100;
 
 struct linked_list{
     struct list_head list; /* kernel's list structure */
@@ -58,7 +59,7 @@ struct linked_list{
 
 struct linked_list linkedList;
 
-int add_node(__u64 offset){
+struct linked_list* add_node(__u64 offset){
 
     struct linked_list *tmp;
     /* adding elements to list */
@@ -68,7 +69,7 @@ int add_node(__u64 offset){
     tmp->offset = offset;
     /* add the new item 'tmp' to the list of items in linked_list */
     list_add(&(tmp->list), &(linkedList.list));
-    return 1;
+    return tmp;
 }
 
 struct linked_list* find_node(__u64 offset) {
@@ -98,8 +99,9 @@ __u64 tnpheap_get_version(struct tnpheap_cmd __user *user_cmd)
     struct linked_list *node = find_node(cmd.offset);
 
     if(node == NULL){
-        return -1;
+        node = add_node(cmd.offset);
     }
+
     printk(KERN_INFO "Offest is %zu and version is %zu\n",cmd.offset,node->version);
     return node->version;
 }
@@ -112,13 +114,8 @@ __u64 tnpheap_start_tx(struct tnpheap_cmd __user *user_cmd)
     {
         return -1 ;
     }
-    printk(KERN_INFO "starting transaction for offset %zu\n",cmd.offset);
-    struct linked_list *node = find_node(cmd.offset);
-    // creae new node
-    if(node == NULL){
-        add_node(cmd.offset);
-    }
-    return cmd.offset;
+    transaction_id++;
+    return transaction_id;
 }
 
 __u64 tnpheap_commit(struct tnpheap_cmd __user *user_cmd)
