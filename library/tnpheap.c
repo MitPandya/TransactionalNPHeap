@@ -103,7 +103,7 @@ __u64 tnpheap_get_version(int npheap_dev, int tnpheap_dev, __u64 offset)
     __u64 version = ioctl(tnpheap_dev, TNPHEAP_IOCTL_GET_VERSION, &cmd);
 
     struct transaction_node *tmp = find_list(offset);
-    
+
     if(tmp == NULL){
         insert_list(version, offset);
     }
@@ -125,6 +125,9 @@ int tnpheap_handler(int sig, siginfo_t *si)
 void *tnpheap_alloc(int npheap_dev, int tnpheap_dev, __u64 offset, __u64 size)
 {
     fprintf(stdout,"inside alloc\n");
+
+    __u64 version = tnpheap_get_version(npheap_dev, tnpheap_dev, offset);
+
     __u64 aligned_size = ((size + getpagesize() - 1) / getpagesize())*getpagesize();
 
     void *ptr = npheap_alloc(npheap_dev, offset, aligned_size);
