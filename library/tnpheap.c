@@ -15,6 +15,8 @@ struct transaction_node {
     __u64 version;
     __u64 offset;
     char* buffer;
+    void* kmem_ptr;
+    __u64 size;
     struct transaction_node* next;
 };
 
@@ -33,6 +35,9 @@ int insert_list(__u64 version, __u64 offset) {
         head->version = version;
         head->buffer = NULL;
         head->next = NULL;
+        head->kmem_ptr = NULL;
+        head->size = 0;
+
         return 1;
     }
 
@@ -51,6 +56,8 @@ int insert_list(__u64 version, __u64 offset) {
     next_node->version = version;
     next_node->buffer = NULL;
     next_node->next = NULL;
+    next_node->kmem_ptr = NULL;
+    next_node->size = 0;
 
     tmp->next = next_node;
 
@@ -97,14 +104,40 @@ __u64 tnpheap_get_version(int npheap_dev, int tnpheap_dev, __u64 offset)
 
 int tnpheap_handler(int sig, siginfo_t *si)
 {
+    fprintf(stdout,"inside handler %d \n",sig);
     return 0;
 }
 
 
 void *tnpheap_alloc(int npheap_dev, int tnpheap_dev, __u64 offset, __u64 size)
 {
+    fprintf(stdout,"inside alloc\n");
     __u64 aligned_size = ((size + getpagesize() - 1) / getpagesize())*getpagesize();
-    return npheap_alloc(npheap_dev, offset, aligned_size);
+
+    void *ptr = npheap_alloc(npheap_dev, offset, aligned_size);
+
+    if(ptr == NULL){
+        fprintf(stderr,"error in kmalloc\n");
+        return NULL;
+    }
+
+    fprintf(stdout,"size is %zu %zu \n", sizeof(ptr), sizeof(&ptr));
+
+    struct transaction_node *tmp = find_list(offset);
+    if(tmp == NULL){
+        fprintf(stderr,"error in alloc\n");
+        return NULL;
+    }
+
+    tmp->kmem_ptr = ptr;
+    tmp->size = aligned_size;
+    tmp->buffer = (char *)malloc(sizeof(aligned_size));
+
+    if(tmp->buffer == NULL){
+        fprintf(stderr,"error in user malloc\n");
+        return NULL;
+    }
+    return tmp->buffer;
 }
 
 __u64 tnpheap_start_tx(int npheap_dev, int tnpheap_dev)

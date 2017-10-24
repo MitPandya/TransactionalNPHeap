@@ -1,6 +1,6 @@
 sudo dmesg -C
 sudo rmmod tnpheap
-#sudo rmmod npheap
+sudo rmmod npheap
 cd kernel_module
 sudo make clean
 make
@@ -19,4 +19,5 @@ sudo insmod NPHeap/npheap.ko
 sudo chmod 777 /dev/npheap
 sudo insmod kernel_module/tnpheap.ko
 sudo chmod 777 /dev/tnpheap
+./benchmark/benchmark 1 8192 1
 
