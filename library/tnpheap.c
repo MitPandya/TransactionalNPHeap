@@ -72,7 +72,7 @@ int insert_list(__u64 version, __u64 offset) {
 }
 
 struct transaction_node* find_list(__u64 offset) {
-    print_list();
+    //print_list();
     if(head == NULL){
         fprintf(stdout,"list is empty, inside find\n");
     }
@@ -112,7 +112,7 @@ __u64 tnpheap_get_version(int npheap_dev, int tnpheap_dev, __u64 offset)
     if(tmp == NULL){
         insert_list(version, offset);
     }
-    print_list();
+    //print_list();
     
     fprintf(stdout,"Offest is %zu and version is %zu\n",offset,version);
     return version;
