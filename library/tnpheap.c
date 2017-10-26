@@ -204,7 +204,7 @@ int tnpheap_commit(int npheap_dev, int tnpheap_dev)
                 npheap_unlock(npheap_dev,cmd.offset);
                 return 1;
             }*/
-            void *ptr = npheap_alloc(npheap_dev, offset, aligned_size);
+            void *ptr = npheap_alloc(npheap_dev, cmd.offset, tmp->size);
             fprintf(stdout,"memset");
             memset((char *)ptr, 0, tmp->size);
             fprintf(stdout,"memcpy");
