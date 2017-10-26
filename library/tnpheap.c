@@ -213,7 +213,8 @@ int tnpheap_commit(int npheap_dev, int tnpheap_dev)
             // update version in user memory
             __u64 version = tnpheap_get_version(npheap_dev, tnpheap_dev, cmd.offset);
             tmp->version = version;
-
+            memcpy((char *)tmp->kmem_ptr, tmp->buffer, tmp->size);
+            
             fprintf(stdout, "Commit Successful\n");
             pthread_mutex_unlock(&lock);
             pthread_mutex_destroy(&lock);
