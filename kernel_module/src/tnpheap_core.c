@@ -134,10 +134,17 @@ __u64 tnpheap_commit(struct tnpheap_cmd __user *user_cmd)
     }
     if(cmd.version == node->version) {
         //version matches, write to kernel memory
+        struct linked_list *tmp;
+        /* adding elements to list */
+        tmp= (struct linked_list *)kmalloc(sizeof(struct linked_list), GFP_KERNEL);
+        global_version++;
+        tmp->version = global_version;
+        tmp->offset = cmd.offset;
+
+        list_replace(&(node->list),&(tmp->list));
+
+        kfree(node);
         return 0;
-    } else {
-        //update the version number
-        return 1;
     }
 
     return 1;

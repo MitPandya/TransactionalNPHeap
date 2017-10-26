@@ -10,6 +10,8 @@
 #include <signal.h>
 #include <malloc.h>
 #include <string.h>
+#include <pthread.h>
+
 
 struct transaction_node {
     __u64 version;
@@ -19,6 +21,9 @@ struct transaction_node {
     __u64 size;
     struct transaction_node* next;
 };
+
+pthread_mutex_t lock;
+
 
 struct transaction_node *head;
 
@@ -161,28 +166,70 @@ __u64 tnpheap_start_tx(int npheap_dev, int tnpheap_dev)
     struct tnpheap_cmd cmd;
 	__u64 transaction_id = ioctl(tnpheap_dev, TNPHEAP_IOCTL_START_TX, &cmd);
 
+    if (pthread_mutex_init(&lock, NULL) != 0)
+    {
+        fprintf(stderr,"\n mutex init failed\n");
+        return -1;
+    }
+
 	return transaction_id;
 }
 
 int tnpheap_commit(int npheap_dev, int tnpheap_dev)
 {
+    pthread_mutex_lock(&lock);
+
     struct transaction_node *tmp = head;
 	struct tnpheap_cmd cmd;
 
     while(tmp != NULL) {
         cmd.offset = tmp->offset;
         cmd.version = tmp->version;
-        __u64 commit = ioctl(tnpheap_dev, TNPHEAP_IOCTL_COMMIT, &cmd);
+
+        __u64 version = tnpheap_get_version(npheap_dev, tnpheap_dev, offset);
+
+        if(cmd.version == version){
+
+            //memcpy((char *)tmp->kmem_ptr, tmp->buffer, tmp->size);
+            if(snprintf((char *)tmp->kmem_ptr, tmp->size, "%s",tmp->buffer) != tmp->size){
+                pthread_mutex_unlock(&lock);
+                pthread_mutex_destroy(&lock);
+                return 1;
+            }
+
+            __u64 commit = ioctl(tnpheap_dev, TNPHEAP_IOCTL_COMMIT, &cmd);
+
+            if(commit == 1){
+                memset((char *)tmp->kmem_ptr, 0, tmp->size);
+                pthread_mutex_unlock(&lock);
+                pthread_mutex_destroy(&lock);
+                return 1;
+            }
+
+            // update version in user memory
+            __u64 version = tnpheap_get_version(npheap_dev, tnpheap_dev, offset);
+
+            fprintf(stdout, "Commit Successful\n");
+            pthread_mutex_unlock(&lock);
+            pthread_mutex_destroy(&lock);
+            return 0;
+
+
+        }
+        else{
+            tmp = tmp->next;
+        }
+        /*__u64 commit = ioctl(tnpheap_dev, TNPHEAP_IOCTL_COMMIT, &cmd);
 
         if(commit == 1) {
             fprintf(stderr, "kernel sent 1 as commit message\n");
             return commit;
-        }
-
-        memcpy((char *)tmp->kmem_ptr, tmp->buffer, tmp->size);
-        tmp = tmp->next;
+        }*/
     }
     head = NULL;
+
     fprintf(stdout, "Commit Successful\n");
+    pthread_mutex_unlock(&lock);
+    pthread_mutex_destroy(&lock);
 	return 0;
 }
