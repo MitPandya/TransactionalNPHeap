@@ -197,13 +197,14 @@ int tnpheap_commit(int npheap_dev, int tnpheap_dev)
 
             //memcpy((char *)tmp->kmem_ptr, tmp->buffer, tmp->size);
             npheap_lock(npheap_dev,cmd.offset);
-            if(sprintf((char *)tmp->kmem_ptr, "%s",tmp->buffer) <= 0){
+            /*if(sprintf((char *)tmp->kmem_ptr, "%s",tmp->buffer) <= 0){
                 fprintf(stdout,"error writing to npheap\n");
                 pthread_mutex_unlock(&lock);
                 pthread_mutex_destroy(&lock);
                 npheap_unlock(npheap_dev,cmd.offset);
                 return 1;
-            }
+            }*/
+            memcpy((char *)tmp->kmem_ptr, tmp->buffer, tmp->size);
             npheap_unlock(npheap_dev,cmd.offset);
             __u64 commit = ioctl(tnpheap_dev, TNPHEAP_IOCTL_COMMIT, &cmd);
 
