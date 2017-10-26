@@ -17,7 +17,7 @@ struct transaction_node {
     __u64 version;
     __u64 offset;
     char* buffer;
-    void* kmem_ptr;
+    void** kmem_ptr;
     __u64 size;
     struct transaction_node* next;
 };
