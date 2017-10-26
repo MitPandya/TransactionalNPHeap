@@ -195,14 +195,14 @@ int tnpheap_commit(int npheap_dev, int tnpheap_dev)
         if(cmd.version == version){
 
             //memcpy((char *)tmp->kmem_ptr, tmp->buffer, tmp->size);
-            npheap_lock(npheap_dev,i);
+            npheap_lock(npheap_dev,cmd.offset);
             if(snprintf((char *)tmp->kmem_ptr, tmp->size, "%s",tmp->buffer) != tmp->size){
                 pthread_mutex_unlock(&lock);
                 pthread_mutex_destroy(&lock);
-                npheap_unlock(npheap_dev,i);
+                npheap_unlock(npheap_dev,cmd.offset);
                 return 1;
             }
-            npheap_unlock(npheap_dev,i);
+            npheap_unlock(npheap_dev,cmd.offset);
             __u64 commit = ioctl(tnpheap_dev, TNPHEAP_IOCTL_COMMIT, &cmd);
 
             if(commit == 1){
