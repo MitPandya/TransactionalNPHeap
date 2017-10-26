@@ -57,6 +57,7 @@ struct linked_list{
     struct list_head list; /* kernel's list structure */
     __u64 version;
     __u64 offset;
+    struct mutex lock;
 };
 
 struct linked_list linkedList;
@@ -69,6 +70,7 @@ struct linked_list* add_node(__u64 offset){
     global_version++;
     tmp->version = global_version;
     tmp->offset = offset;
+    mutex_init(&(tmp->lock));  
     /* add the new item 'tmp' to the list of items in linked_list */
     list_add(&(tmp->list), &(linkedList.list));
     return tmp;
@@ -126,21 +128,22 @@ __u64 tnpheap_start_tx(struct tnpheap_cmd __user *user_cmd)
 __u64 tnpheap_commit(struct tnpheap_cmd __user *user_cmd)
 {
     printk("inside commit");
-    mutex_lock(&lock);
+    //mutex_lock(&lock);
     struct tnpheap_cmd cmd;
     __u64 ret=0;
     if (copy_from_user(&cmd, user_cmd, sizeof(cmd)))
     {
-        mutex_unlock(&lock);
+        //mutex_unlock(&lock);
         return 1;
     }
     struct linked_list* node = find_node(cmd.offset);
     if(node == NULL) {
         //node not found
         printk(KERN_ERR "Node not found! %zu\n", cmd.offset);
-        mutex_unlock(&lock);
+        //mutex_unlock(&lock);
         return 1;
     }
+    mutex_lock(&(node->mutex));
     if(cmd.version == node->version) {
         //version matches, write to kernel memory
         struct linked_list *tmp;
@@ -154,11 +157,12 @@ __u64 tnpheap_commit(struct tnpheap_cmd __user *user_cmd)
 
         kfree(node);
         printk("Commit success");
-        mutex_unlock(&lock);
+        //mutex_unlock(&lock);
         return 0;
     }
+    mutex_unlock(&(node->mutex));
     printk("Commit error");
-    mutex_unlock(&lock);
+    //mutex_unlock(&lock);
     return 1;
 }
 
