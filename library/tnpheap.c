@@ -186,7 +186,7 @@ int tnpheap_commit(int npheap_dev, int tnpheap_dev)
         cmd.offset = tmp->offset;
         cmd.version = tmp->version;
 
-        __u64 version = tnpheap_get_version(npheap_dev, tnpheap_dev, offset);
+        __u64 version = tnpheap_get_version(npheap_dev, tnpheap_dev, cmd.offset);
 
         if(cmd.version == version){
 
@@ -207,7 +207,8 @@ int tnpheap_commit(int npheap_dev, int tnpheap_dev)
             }
 
             // update version in user memory
-            __u64 version = tnpheap_get_version(npheap_dev, tnpheap_dev, offset);
+            __u64 version = tnpheap_get_version(npheap_dev, tnpheap_dev, cmd.offset);
+            tmp->version = version;
 
             fprintf(stdout, "Commit Successful\n");
             pthread_mutex_unlock(&lock);
