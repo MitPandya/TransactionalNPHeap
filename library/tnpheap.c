@@ -17,7 +17,7 @@ struct transaction_node {
     __u64 version;
     __u64 offset;
     char* buffer;
-    void** kmem_ptr;
+    void* kmem_ptr;
     __u64 size;
     struct transaction_node* next;
 };
@@ -154,7 +154,7 @@ void *tnpheap_alloc(int npheap_dev, int tnpheap_dev, __u64 offset, __u64 size)
         return NULL;
     }
 
-    tmp->kmem_ptr = &ptr;
+    tmp->kmem_ptr = ptr;
     tmp->size = aligned_size;
     tmp->buffer = (char *)malloc(sizeof(aligned_size));
 
@@ -204,17 +204,18 @@ int tnpheap_commit(int npheap_dev, int tnpheap_dev)
                 npheap_unlock(npheap_dev,cmd.offset);
                 return 1;
             }*/
+            void *ptr = npheap_alloc(npheap_dev, offset, aligned_size);
             fprintf(stdout,"memset");
-            memset((char *)tmp->kmem_ptr, 0, tmp->size);
+            memset((char *)ptr, 0, tmp->size);
             fprintf(stdout,"memcpy");
-            memcpy((char *)tmp->kmem_ptr, tmp->buffer, tmp->size);
+            memcpy((char *)ptr, tmp->buffer, tmp->size);
             fprintf(stdout,"done");
             npheap_unlock(npheap_dev,cmd.offset);
             __u64 commit = ioctl(tnpheap_dev, TNPHEAP_IOCTL_COMMIT, &cmd);
 
             if(commit == 1){
 
-                memset((char *)tmp->kmem_ptr, 0, tmp->size);
+                memset((char *)ptr, 0, tmp->size);
                 pthread_mutex_unlock(&lock);
                 pthread_mutex_destroy(&lock);
                 return 1;
