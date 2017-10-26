@@ -205,10 +205,13 @@ int tnpheap_commit(int npheap_dev, int tnpheap_dev)
                 return 1;
             }*/
             void *ptr = npheap_alloc(npheap_dev, cmd.offset, tmp->size);
-            fprintf(stdout,"memset");
+            /*fprintf(stdout,"memset");
             memset((char *)ptr, 0, tmp->size);
             fprintf(stdout,"memcpy");
-            memcpy((char *)ptr, tmp->buffer, tmp->size);
+            memcpy((char *)ptr, tmp->buffer, tmp->size);*/
+            if (copy_from_user(ptr, tmp->buffer, tmp->size) != 0){
+                return -EFAULT;
+            }
             fprintf(stdout,"done");
             npheap_unlock(npheap_dev,cmd.offset);
             __u64 commit = ioctl(tnpheap_dev, TNPHEAP_IOCTL_COMMIT, &cmd);
