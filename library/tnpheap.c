@@ -124,7 +124,7 @@ int tnpheap_handler(int sig, siginfo_t *si)
 {
     printf("Inside TNPHeap Handler sig: %d, error_no: %d, pid: %d\n\n", sig, si->si_errno, getpid());
 
-    signal(sig, SIG_DFL);
+    signal(sig, SIGSEGV);
     kill(getpid(), 9);
 
     return 0;
