@@ -162,6 +162,7 @@ void *tnpheap_alloc(int npheap_dev, int tnpheap_dev, __u64 offset, __u64 size)
         fprintf(stderr,"error in user malloc\n");
         return NULL;
     }
+    fprintf(stdout,"exit alloc");
     return tmp->buffer;
 }
 
