@@ -48,6 +48,8 @@
 
 struct miscdevice tnpheap_dev;
 
+struct mutex lock;
+
 __u64 transaction_id = 0;
 __u64 global_version = 100;
 
@@ -91,6 +93,7 @@ struct linked_list* find_node(__u64 offset) {
 __u64 tnpheap_get_version(struct tnpheap_cmd __user *user_cmd)
 {
     printk("inside get version\n");
+    mutex_lock(&lock);
     struct tnpheap_cmd cmd;
     if (copy_from_user(&cmd, user_cmd, sizeof(cmd)))
     {
@@ -112,24 +115,30 @@ __u64 tnpheap_start_tx(struct tnpheap_cmd __user *user_cmd)
     __u64 ret=0;
     if (copy_from_user(&cmd, user_cmd, sizeof(cmd)))
     {
+        mutex_unlock(&lock);
         return -1 ;
     }
     transaction_id++;
+    mutex_unlock(&lock);
     return transaction_id;
 }
 
 __u64 tnpheap_commit(struct tnpheap_cmd __user *user_cmd)
 {
+    printk("inside commit");
+    mutex_lock(&lock);
     struct tnpheap_cmd cmd;
     __u64 ret=0;
     if (copy_from_user(&cmd, user_cmd, sizeof(cmd)))
     {
+        mutex_unlock(&lock);
         return 1;
     }
     struct linked_list* node = find_node(cmd.offset);
     if(node == NULL) {
         //node not found
         printk(KERN_ERR "Node not found! %zu\n", cmd.offset);
+        mutex_unlock(&lock);
         return 1;
     }
     if(cmd.version == node->version) {
@@ -144,9 +153,12 @@ __u64 tnpheap_commit(struct tnpheap_cmd __user *user_cmd)
         list_replace(&(node->list),&(tmp->list));
 
         kfree(node);
+        printk("Commit success");
+        mutex_unlock(&lock);
         return 0;
     }
-
+    printk("Commit error");
+    mutex_unlock(&lock);
     return 1;
 }
 
@@ -186,6 +198,7 @@ static int __init tnpheap_module_init(void)
     else{
         printk(KERN_ERR "\"npheap\" misc device installed\n");
         INIT_LIST_HEAD(&linkedList.list);
+        mutex_init(&lock);  
     }
     return 1;
 }

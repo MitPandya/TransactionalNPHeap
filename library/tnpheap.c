@@ -182,7 +182,7 @@ __u64 tnpheap_start_tx(int npheap_dev, int tnpheap_dev)
 int tnpheap_commit(int npheap_dev, int tnpheap_dev)
 {
     pthread_mutex_lock(&lock);
-
+    fprintf(stdout,"inside commit");
     struct transaction_node *tmp = head;
 	struct tnpheap_cmd cmd;
 
@@ -195,26 +195,25 @@ int tnpheap_commit(int npheap_dev, int tnpheap_dev)
         if(cmd.version == version){
 
             //memcpy((char *)tmp->kmem_ptr, tmp->buffer, tmp->size);
+            npheap_lock(npheap_dev,i);
             if(snprintf((char *)tmp->kmem_ptr, tmp->size, "%s",tmp->buffer) != tmp->size){
                 pthread_mutex_unlock(&lock);
                 pthread_mutex_destroy(&lock);
+                npheap_unlock(npheap_dev,i);
                 return 1;
             }
-
+            npheap_unlock(npheap_dev,i);
             __u64 commit = ioctl(tnpheap_dev, TNPHEAP_IOCTL_COMMIT, &cmd);
 
             if(commit == 1){
+
                 memset((char *)tmp->kmem_ptr, 0, tmp->size);
                 pthread_mutex_unlock(&lock);
                 pthread_mutex_destroy(&lock);
                 return 1;
             }
 
-            // update version in user memory
-            __u64 version = tnpheap_get_version(npheap_dev, tnpheap_dev, cmd.offset);
-            tmp->version = version;
-            memcpy((char *)tmp->kmem_ptr, tmp->buffer, tmp->size);
-            
+            head = NULL;
             fprintf(stdout, "Commit Successful\n");
             pthread_mutex_unlock(&lock);
             pthread_mutex_destroy(&lock);
@@ -232,10 +231,7 @@ int tnpheap_commit(int npheap_dev, int tnpheap_dev)
             return commit;
         }*/
     }
-    head = NULL;
-
-    fprintf(stdout, "Commit Successful\n");
     pthread_mutex_unlock(&lock);
     pthread_mutex_destroy(&lock);
-	return 0;
+    return 0;
 }
