@@ -162,7 +162,7 @@ void *tnpheap_alloc(int npheap_dev, int tnpheap_dev, __u64 offset, __u64 size)
         fprintf(stderr,"error in user malloc\n");
         return NULL;
     }
-    fprintf(stdout,"exit alloc");
+    fprintf(stdout,"exit alloc\n");
     return tmp->buffer;
 }
 
@@ -183,7 +183,7 @@ __u64 tnpheap_start_tx(int npheap_dev, int tnpheap_dev)
 int tnpheap_commit(int npheap_dev, int tnpheap_dev)
 {
     pthread_mutex_lock(&lock);
-    fprintf(stdout,"inside commit");
+    fprintf(stdout,"inside commit\n");
     struct transaction_node *tmp = head;
 	struct tnpheap_cmd cmd;
 
@@ -198,6 +198,7 @@ int tnpheap_commit(int npheap_dev, int tnpheap_dev)
             //memcpy((char *)tmp->kmem_ptr, tmp->buffer, tmp->size);
             npheap_lock(npheap_dev,cmd.offset);
             if(snprintf((char *)tmp->kmem_ptr, tmp->size, "%s",tmp->buffer) != tmp->size){
+                fprintf(stdout,"error writing to npheap\n");
                 pthread_mutex_unlock(&lock);
                 pthread_mutex_destroy(&lock);
                 npheap_unlock(npheap_dev,cmd.offset);
