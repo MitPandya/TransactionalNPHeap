@@ -210,7 +210,7 @@ int tnpheap_commit(int npheap_dev, int tnpheap_dev)
             fprintf(stdout,"memcpy");
             memcpy((char *)ptr, tmp->buffer, tmp->size);*/
             if (copy_from_user(ptr, tmp->buffer, tmp->size) != 0){
-                return -EFAULT;
+                return 1;
             }
             fprintf(stdout,"done");
             npheap_unlock(npheap_dev,cmd.offset);
