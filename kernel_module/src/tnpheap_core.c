@@ -143,7 +143,7 @@ __u64 tnpheap_commit(struct tnpheap_cmd __user *user_cmd)
         //mutex_unlock(&lock);
         return 1;
     }
-    mutex_lock(&(node->mutex));
+    mutex_lock(&(node->lock));
     if(cmd.version == node->version) {
         //version matches, write to kernel memory
         struct linked_list *tmp;
@@ -160,7 +160,7 @@ __u64 tnpheap_commit(struct tnpheap_cmd __user *user_cmd)
         //mutex_unlock(&lock);
         return 0;
     }
-    mutex_unlock(&(node->mutex));
+    mutex_unlock(&(node->lock));
     printk("Commit error");
     //mutex_unlock(&lock);
     return 1;
