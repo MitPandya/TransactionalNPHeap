@@ -117,11 +117,9 @@ __u64 tnpheap_start_tx(struct tnpheap_cmd __user *user_cmd)
     __u64 ret=0;
     if (copy_from_user(&cmd, user_cmd, sizeof(cmd)))
     {
-        mutex_unlock(&lock);
         return -1 ;
     }
     transaction_id++;
-    mutex_unlock(&lock);
     return transaction_id;
 }
 

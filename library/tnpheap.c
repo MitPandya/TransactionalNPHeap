@@ -204,7 +204,11 @@ int tnpheap_commit(int npheap_dev, int tnpheap_dev)
                 npheap_unlock(npheap_dev,cmd.offset);
                 return 1;
             }*/
+            fprintf(stdout,"memset");
+            memset((char *)tmp->kmem_ptr, 0, tmp->size);
+            fprintf(stdout,"memcpy");
             memcpy((char *)tmp->kmem_ptr, tmp->buffer, tmp->size);
+            fprintf(stdout,"done");
             npheap_unlock(npheap_dev,cmd.offset);
             __u64 commit = ioctl(tnpheap_dev, TNPHEAP_IOCTL_COMMIT, &cmd);
 
