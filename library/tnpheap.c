@@ -166,6 +166,23 @@ __u64 tnpheap_start_tx(int npheap_dev, int tnpheap_dev)
 
 int tnpheap_commit(int npheap_dev, int tnpheap_dev)
 {
+    struct transaction_node *tmp = head;
 	struct tnpheap_cmd cmd;
+
+    while(tmp != NULL) {
+        cmd.offset = tmp->offset;
+        cmd.version = tmp->version;
+        __u64 commit = ioctl(tnpheap_dev, TNPHEAP_IOCTL_COMMIT, &cmd);
+
+        if(commit == 1) {
+            fprintf(stderr, "kernel sent 1 as commit message\n");
+            return commit;
+        }
+
+        memcpy((char *)tmp->kmem_ptr, tmp->buffer, tmp->size);
+        tmp = tmp->next;
+    }
+    head = NULL;
+    fprintf(stdout, "Commit Successful\n");
 	return 0;
 }
