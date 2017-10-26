@@ -107,11 +107,11 @@ __u64 tnpheap_get_version(int npheap_dev, int tnpheap_dev, __u64 offset)
 
     __u64 version = ioctl(tnpheap_dev, TNPHEAP_IOCTL_GET_VERSION, &cmd);
 
-    struct transaction_node *tmp = find_list(offset);
+    //struct transaction_node *tmp = find_list(offset);
 
-    if(tmp == NULL){
+    //if(tmp == NULL){
         insert_list(version, offset);
-    }
+    //}
     //print_list();
     
     fprintf(stdout,"Offest is %zu and version is %zu\n",offset,version);
@@ -193,7 +193,7 @@ int tnpheap_commit(int npheap_dev, int tnpheap_dev)
 
         __u64 version = tnpheap_get_version(npheap_dev, tnpheap_dev, cmd.offset);
 
-        //if(cmd.version == version){
+        if(cmd.version == version){
 
             //memcpy((char *)tmp->kmem_ptr, tmp->buffer, tmp->size);
             npheap_lock(npheap_dev,cmd.offset);
@@ -210,7 +210,7 @@ int tnpheap_commit(int npheap_dev, int tnpheap_dev)
             fprintf(stdout,"memcpy");*/
             memcpy((char *)ptr, tmp->buffer, tmp->size);
             /*if (copy_from_user(ptr, tmp->buffer, tmp->size) != 0){
-                return 1;
+                return -EFAULT;
             }*/
             fprintf(stdout,"done");
             npheap_unlock(npheap_dev,cmd.offset);
@@ -224,17 +224,17 @@ int tnpheap_commit(int npheap_dev, int tnpheap_dev)
                 return 1;
             }
 
-            //head = NULL;
-            //fprintf(stdout, "Commit Successful\n");
-            //pthread_mutex_unlock(&lock);
-            //pthread_mutex_destroy(&lock);
-            //return 0;
+            head = NULL;
+            fprintf(stdout, "Commit Successful\n");
+            pthread_mutex_unlock(&lock);
+            pthread_mutex_destroy(&lock);
+            return 0;
 
 
-        //}
-        //else{
+        }
+        else{
             tmp = tmp->next;
-        //}
+        }
         /*__u64 commit = ioctl(tnpheap_dev, TNPHEAP_IOCTL_COMMIT, &cmd);
 
         if(commit == 1) {
@@ -242,8 +242,6 @@ int tnpheap_commit(int npheap_dev, int tnpheap_dev)
             return commit;
         }*/
     }
-    head = NULL;
-    fprintf(stdout, "Commit Successful\n");
     pthread_mutex_unlock(&lock);
     pthread_mutex_destroy(&lock);
     return 0;
