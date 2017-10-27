@@ -163,6 +163,8 @@ void *tnpheap_alloc(int npheap_dev, int tnpheap_dev, __u64 offset, __u64 size)
         fprintf(stderr,"error in user malloc\n");
         return NULL;
     }
+
+    fprintf(stdout,"usable size is %zu\n",malloc_usable_size(tmp->buffer));
     memset(tmp->buffer, 0, sizeof(aligned_size));
     fprintf(stdout,"exit alloc\n");
     return tmp->buffer;
