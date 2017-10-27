@@ -107,11 +107,11 @@ __u64 tnpheap_get_version(int npheap_dev, int tnpheap_dev, __u64 offset)
 
     __u64 version = ioctl(tnpheap_dev, TNPHEAP_IOCTL_GET_VERSION, &cmd);
 
-    //struct transaction_node *tmp = find_list(offset);
+    struct transaction_node *tmp = find_list(offset);
 
-    //if(tmp == NULL){
+    if(tmp == NULL){
         insert_list(version, offset);
-    //}
+    }
     //print_list();
     
     fprintf(stdout,"Offest is %llu and version is %llu\n",offset,version);
