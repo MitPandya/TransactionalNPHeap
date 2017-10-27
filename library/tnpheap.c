@@ -43,7 +43,7 @@ int insert_list(__u64 version, __u64 offset) {
         //head->kmem_ptr = NULL;
         head->size = 0;
 
-        fprintf(stdout,"inserted head, offset is %x\n",head->offset);
+        fprintf(stdout,"inserted head, offset is %zu\n",head->offset);
         return 1;
     }
 
