@@ -43,7 +43,7 @@ int insert_list(__u64 version, __u64 offset) {
         //head->kmem_ptr = NULL;
         head->size = 0;
 
-        fprintf(stdout,"inserted head, offset is %zu\n",head->offset);
+        fprintf(stdout,"inserted head, offset is %llu\n",head->offset);
         return 1;
     }
 
@@ -66,7 +66,7 @@ int insert_list(__u64 version, __u64 offset) {
     next_node->size = 0;
 
     tmp->next = next_node;
-    fprintf(stdout,"inserted node, offset is %x\n",next_node->offset);
+    fprintf(stdout,"inserted node, offset is %llu\n",next_node->offset);
 
     return 1;
 }
@@ -80,7 +80,7 @@ struct transaction_node* find_list(__u64 offset) {
     struct transaction_node* tmp = head;
     while(tmp != NULL) {
         if(tmp->offset == offset) {
-            fprintf(stdout, "found node %zu\n", tmp->offset);
+            fprintf(stdout, "found node %llu\n", tmp->offset);
             return tmp;
         }
         tmp = tmp->next;
@@ -95,7 +95,7 @@ void print_list() {
     }
     struct transaction_node* tmp = head;
     while(tmp != NULL) {
-        fprintf(stdout, "node->version: %zu, node->offset: %zu\n", tmp->version, tmp->offset);
+        fprintf(stdout, "node->version: %llu, node->offset: %llu\n", tmp->version, tmp->offset);
         tmp = tmp->next;
     }
 }
@@ -114,7 +114,7 @@ __u64 tnpheap_get_version(int npheap_dev, int tnpheap_dev, __u64 offset)
     //}
     //print_list();
     
-    fprintf(stdout,"Offest is %zu and version is %zu\n",offset,version);
+    fprintf(stdout,"Offest is %llu and version is %llu\n",offset,version);
     return version;
 }
 
@@ -139,7 +139,7 @@ void *tnpheap_alloc(int npheap_dev, int tnpheap_dev, __u64 offset, __u64 size)
 
     __u64 aligned_size = ((size + getpagesize() - 1) / getpagesize())*getpagesize();
 
-    fprintf(stdout,"aligned size is %zu %zu\n",aligned_size,size);
+    fprintf(stdout,"aligned size is %llu %llu\n",aligned_size,size);
 
     //void *ptr = npheap_alloc(npheap_dev, offset, aligned_size);
 
@@ -165,7 +165,7 @@ void *tnpheap_alloc(int npheap_dev, int tnpheap_dev, __u64 offset, __u64 size)
         return NULL;
     }
 
-    fprintf(stdout,"usable size is %zu\n",malloc_usable_size(tmp->buffer));
+    fprintf(stdout,"usable size is %llu\n",malloc_usable_size(tmp->buffer));
     memset(tmp->buffer, 0, aligned_size);
     fprintf(stdout,"exit alloc\n");
     return tmp->buffer;
