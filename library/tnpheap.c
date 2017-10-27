@@ -17,7 +17,7 @@ struct transaction_node {
     __u64 version;
     __u64 offset;
     char* buffer;
-    void* kmem_ptr;
+    //void* kmem_ptr;
     __u64 size;
     struct transaction_node* next;
 };
@@ -40,7 +40,7 @@ int insert_list(__u64 version, __u64 offset) {
         head->version = version;
         head->buffer = NULL;
         head->next = NULL;
-        head->kmem_ptr = NULL;
+        //head->kmem_ptr = NULL;
         head->size = 0;
 
         fprintf(stdout,"inserted head, offset is %x\n",head->offset);
@@ -62,7 +62,7 @@ int insert_list(__u64 version, __u64 offset) {
     next_node->version = version;
     next_node->buffer = NULL;
     next_node->next = NULL;
-    next_node->kmem_ptr = NULL;
+    //next_node->kmem_ptr = NULL;
     next_node->size = 0;
 
     tmp->next = next_node;
@@ -139,14 +139,14 @@ void *tnpheap_alloc(int npheap_dev, int tnpheap_dev, __u64 offset, __u64 size)
 
     __u64 aligned_size = ((size + getpagesize() - 1) / getpagesize())*getpagesize();
 
-    void *ptr = npheap_alloc(npheap_dev, offset, aligned_size);
+    //void *ptr = npheap_alloc(npheap_dev, offset, aligned_size);
 
-    if(ptr == NULL){
+    /*if(ptr == NULL){
         fprintf(stderr,"error in kmalloc\n");
         return NULL;
     }
 
-    fprintf(stdout,"size is %zu %zu \n", sizeof(ptr), sizeof(&ptr));
+    fprintf(stdout,"size is %zu %zu \n", sizeof(ptr), sizeof(&ptr));*/
 
     struct transaction_node *tmp = find_list(offset);
     if(tmp == NULL){
@@ -154,7 +154,7 @@ void *tnpheap_alloc(int npheap_dev, int tnpheap_dev, __u64 offset, __u64 size)
         return NULL;
     }
 
-    tmp->kmem_ptr = ptr;
+    //tmp->kmem_ptr = ptr;
     tmp->size = aligned_size;
     tmp->buffer = (char *)malloc(sizeof(aligned_size));
 
@@ -212,7 +212,7 @@ int tnpheap_commit(int npheap_dev, int tnpheap_dev)
             /*if (copy_from_user(ptr, tmp->buffer, tmp->size) != 0){
                 return -EFAULT;
             }*/
-            fprintf(stdout,"done");
+            fprintf(stdout,"done\n");
             npheap_unlock(npheap_dev,cmd.offset);
             __u64 commit = ioctl(tnpheap_dev, TNPHEAP_IOCTL_COMMIT, &cmd);
 
