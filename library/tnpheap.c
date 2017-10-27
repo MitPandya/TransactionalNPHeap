@@ -157,7 +157,9 @@ void *tnpheap_alloc(int npheap_dev, int tnpheap_dev, __u64 offset, __u64 size)
     }
 
     //tmp->kmem_ptr = ptr;
-    tmp->size = aligned_size;
+    if(aligned_size != 0)
+        tmp->size = aligned_size;
+    
     tmp->buffer = (char *)malloc(aligned_size);
 
     if(tmp->buffer == NULL){
