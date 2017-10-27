@@ -138,6 +138,7 @@ void *tnpheap_alloc(int npheap_dev, int tnpheap_dev, __u64 offset, __u64 size)
     __u64 version = tnpheap_get_version(npheap_dev, tnpheap_dev, offset);
 
     __u64 aligned_size = ((size + getpagesize() - 1) / getpagesize())*getpagesize();
+    fprintf(stdout,"aligned size is %zu\n",aligned_size);
 
     //void *ptr = npheap_alloc(npheap_dev, offset, aligned_size);
 
