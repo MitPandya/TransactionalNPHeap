@@ -85,6 +85,7 @@ int main(int argc, char *argv[])
         if(data_array[i].size)
         {
             size = data_array[i].size;
+            fprintf(stdout,"size is %zu\n", size);
             mapped_data = (char *)tnpheap_alloc(npheap_dev,tnpheap_dev,i,size);
             if(!mapped_data)
             {
