@@ -72,7 +72,7 @@ int insert_list(__u64 version, __u64 offset) {
 }
 
 struct transaction_node* find_list(__u64 offset) {
-    //print_list();
+    //print_list(); 
     if(head == NULL){
         fprintf(stdout,"list is empty, inside find\n");
     }
@@ -156,12 +156,13 @@ void *tnpheap_alloc(int npheap_dev, int tnpheap_dev, __u64 offset, __u64 size)
 
     //tmp->kmem_ptr = ptr;
     tmp->size = aligned_size;
-    tmp->buffer = (char *)calloc(1, sizeof(aligned_size));
+    tmp->buffer = (char *)malloc(sizeof(aligned_size));
 
     if(tmp->buffer == NULL){
         fprintf(stderr,"error in user malloc\n");
         return NULL;
     }
+    memset(tmp->buffer, 0, sizeof(aligned_size));
     fprintf(stdout,"exit alloc\n");
     return tmp->buffer;
 }
@@ -176,7 +177,7 @@ __u64 tnpheap_start_tx(int npheap_dev, int tnpheap_dev)
         fprintf(stderr,"\n mutex init failed\n");
         return -1;
     }
-
+ 
 	return transaction_id;
 }
 
@@ -224,7 +225,7 @@ int tnpheap_commit(int npheap_dev, int tnpheap_dev)
                 return 1;
             }
 
-            head = NULL;
+           // head = NULL;
             fprintf(stdout, "Commit Successful\n");
             pthread_mutex_unlock(&lock);
             pthread_mutex_destroy(&lock);
