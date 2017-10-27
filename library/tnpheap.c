@@ -31,7 +31,7 @@ __u64 global_version = 0;
 
 int insert_list(__u64 version, __u64 offset) {
     if(head == NULL) {
-        head = (struct transaction_node*)malloc(sizeof(struct transaction_node));
+        head = (struct transaction_node*)calloc(sizeof(struct transaction_node));
         if(head == NULL){
             fprintf(stdout,"error in malloc, node creation failed\n");
             return -1;
@@ -53,7 +53,7 @@ int insert_list(__u64 version, __u64 offset) {
         tmp = tmp->next;
     }
 
-    struct transaction_node* next_node = (struct transaction_node*)malloc(sizeof(struct transaction_node));
+    struct transaction_node* next_node = (struct transaction_node*)calloc(sizeof(struct transaction_node));
     if(next_node == NULL){
         fprintf(stdout,"error in malloc, node creation failed\n");
         return -1;
@@ -182,8 +182,8 @@ __u64 tnpheap_start_tx(int npheap_dev, int tnpheap_dev)
 
 int tnpheap_commit(int npheap_dev, int tnpheap_dev)
 {
-    pthread_mutex_lock(&lock);
     fprintf(stdout,"inside commit\n");
+    pthread_mutex_lock(&lock);
     struct transaction_node *tmp = head;
 	struct tnpheap_cmd cmd;
 
