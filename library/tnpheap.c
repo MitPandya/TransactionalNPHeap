@@ -80,7 +80,7 @@ struct transaction_node* find_list(__u64 offset) {
     struct transaction_node* tmp = head;
     while(tmp != NULL) {
         if(tmp->offset == offset) {
-            fprintf(stdout, "found node %x\n", tmp->offset);
+            fprintf(stdout, "found node %zu\n", tmp->offset);
             return tmp;
         }
         tmp = tmp->next;
@@ -138,7 +138,7 @@ void *tnpheap_alloc(int npheap_dev, int tnpheap_dev, __u64 offset, __u64 size)
     __u64 version = tnpheap_get_version(npheap_dev, tnpheap_dev, offset);
 
     __u64 aligned_size = ((size + getpagesize() - 1) / getpagesize())*getpagesize();
-    
+
     fprintf(stdout,"aligned size is %zu %zu\n",aligned_size,size);
 
     //void *ptr = npheap_alloc(npheap_dev, offset, aligned_size);
