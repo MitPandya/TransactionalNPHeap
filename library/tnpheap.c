@@ -227,14 +227,14 @@ int tnpheap_commit(int npheap_dev, int tnpheap_dev)
 
                 memset((char *)ptr, 0, tmp->size);
                 pthread_mutex_unlock(&lock);
-                pthread_mutex_destroy(&lock);
+                //pthread_mutex_destroy(&lock);
                 return 1;
             }
 
            // head = NULL;
             fprintf(stdout, "Commit Successful\n");
             pthread_mutex_unlock(&lock);
-            pthread_mutex_destroy(&lock);
+            //pthread_mutex_destroy(&lock);
             return 0;
 
 
@@ -250,6 +250,6 @@ int tnpheap_commit(int npheap_dev, int tnpheap_dev)
         }*/
     }
     pthread_mutex_unlock(&lock);
-    pthread_mutex_destroy(&lock);
+    //pthread_mutex_destroy(&lock);
     return 0;
 }
