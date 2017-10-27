@@ -194,6 +194,9 @@ int tnpheap_commit(int npheap_dev, int tnpheap_dev)
     struct transaction_node *tmp = head;
 	struct tnpheap_cmd cmd;
 
+    if(tmp == NULL)
+        return 1;
+
     while(tmp != NULL) {
         cmd.offset = tmp->offset;
         cmd.version = tmp->version;
@@ -249,7 +252,7 @@ int tnpheap_commit(int npheap_dev, int tnpheap_dev)
             return commit;
         }*/
     }
-    head = NULL;
+    //head = NULL;
     pthread_mutex_unlock(&lock);
     //pthread_mutex_destroy(&lock);
     return 0;
