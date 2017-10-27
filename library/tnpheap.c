@@ -204,18 +204,19 @@ int tnpheap_commit(int npheap_dev, int tnpheap_dev)
 
             //memcpy((char *)tmp->kmem_ptr, tmp->buffer, tmp->size);
             npheap_lock(npheap_dev,cmd.offset);
-            /*if(sprintf((char *)tmp->kmem_ptr, "%s",tmp->buffer) <= 0){
+            void *ptr = npheap_alloc(npheap_dev, cmd.offset, tmp->size);
+            if(sprintf((char *)ptr, "%s",tmp->buffer) <= 0){
                 fprintf(stdout,"error writing to npheap\n");
                 pthread_mutex_unlock(&lock);
                 pthread_mutex_destroy(&lock);
                 npheap_unlock(npheap_dev,cmd.offset);
                 return 1;
-            }*/
-            void *ptr = npheap_alloc(npheap_dev, cmd.offset, tmp->size);
+            }
+            
             /*fprintf(stdout,"memset");
             memset((char *)ptr, 0, tmp->size);
             fprintf(stdout,"memcpy");*/
-            memcpy((char *)ptr, tmp->buffer, tmp->size);
+            //memcpy((char *)ptr, tmp->buffer, tmp->size);
             /*if (copy_from_user(ptr, tmp->buffer, tmp->size) != 0){
                 return -EFAULT;
             }*/

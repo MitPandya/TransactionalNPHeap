@@ -62,7 +62,7 @@ struct linked_list{
 struct linked_list linkedList;
 
 struct linked_list* add_node(__u64 offset){
-
+    mutex_lock(&lock);
     struct linked_list *tmp;
     /* adding elements to list */
     tmp= (struct linked_list *)kmalloc(sizeof(struct linked_list), GFP_KERNEL);
@@ -71,10 +71,12 @@ struct linked_list* add_node(__u64 offset){
     tmp->offset = offset;
     /* add the new item 'tmp' to the list of items in linked_list */
     list_add(&(tmp->list), &(linkedList.list));
+    mutex_unlock(&lock);
     return tmp;
 }
 
 struct linked_list* find_node(__u64 offset) {
+    mutex_lock(&lock);
     struct linked_list *tmp;
     struct list_head *pos, *q;
     // traverse through list and lock the current unocked node
@@ -82,9 +84,11 @@ struct linked_list* find_node(__u64 offset) {
     list_for_each_safe(pos, q, &linkedList.list) {
         tmp = list_entry(pos, struct linked_list, list);
         if(offset == tmp->offset) {
+            mutex_unlock(&lock);
             return tmp;
         }
     }
+    mutex_unlock(&lock);
     return NULL;
 }
 
@@ -106,7 +110,7 @@ __u64 tnpheap_get_version(struct tnpheap_cmd __user *user_cmd)
         node = add_node(cmd.offset);
     }
 
-    printk(KERN_INFO "Offest is %zu and version is %zu\n",cmd.offset,node->version);
+    printk(KERN_INFO "Offest is %llu and version is %llu\n",cmd.offset,node->version);
     mutex_unlock(&lock);
     return node->version;
 }
