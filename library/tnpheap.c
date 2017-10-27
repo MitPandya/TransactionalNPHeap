@@ -133,7 +133,7 @@ int tnpheap_handler(int sig, siginfo_t *si)
 
 void *tnpheap_alloc(int npheap_dev, int tnpheap_dev, __u64 offset, __u64 size)
 {
-    fprintf(stdout,"inside alloc\n");
+    fprintf(stdout,"inside alloc offset is %llu\n",offset);
 
     __u64 version = tnpheap_get_version(npheap_dev, tnpheap_dev, offset);
 
@@ -205,18 +205,18 @@ int tnpheap_commit(int npheap_dev, int tnpheap_dev)
             //memcpy((char *)tmp->kmem_ptr, tmp->buffer, tmp->size);
             npheap_lock(npheap_dev,cmd.offset);
             void *ptr = npheap_alloc(npheap_dev, cmd.offset, tmp->size);
-            if(sprintf((char *)ptr, "%s",tmp->buffer) <= 0){
+            /*if(sprintf((char *)ptr, "%s",tmp->buffer) <= 0){
                 fprintf(stdout,"error writing to npheap\n");
                 pthread_mutex_unlock(&lock);
                 pthread_mutex_destroy(&lock);
                 npheap_unlock(npheap_dev,cmd.offset);
                 return 1;
-            }
+            }*/
             
             /*fprintf(stdout,"memset");
             memset((char *)ptr, 0, tmp->size);
             fprintf(stdout,"memcpy");*/
-            //memcpy((char *)ptr, tmp->buffer, tmp->size);
+            memcpy((char *)ptr, tmp->buffer, tmp->size);
             /*if (copy_from_user(ptr, tmp->buffer, tmp->size) != 0){
                 return -EFAULT;
             }*/
@@ -234,15 +234,14 @@ int tnpheap_commit(int npheap_dev, int tnpheap_dev)
 
            // head = NULL;
             fprintf(stdout, "Commit Successful\n");
-            pthread_mutex_unlock(&lock);
+            //pthread_mutex_unlock(&lock);
             //pthread_mutex_destroy(&lock);
-            return 0;
+            //return 0;
 
 
         }
-        else{
-            tmp = tmp->next;
-        }
+
+        tmp = tmp->next;
         /*__u64 commit = ioctl(tnpheap_dev, TNPHEAP_IOCTL_COMMIT, &cmd);
 
         if(commit == 1) {
@@ -250,6 +249,7 @@ int tnpheap_commit(int npheap_dev, int tnpheap_dev)
             return commit;
         }*/
     }
+    head = NULL;
     pthread_mutex_unlock(&lock);
     //pthread_mutex_destroy(&lock);
     return 0;
