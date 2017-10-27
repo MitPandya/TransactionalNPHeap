@@ -194,6 +194,9 @@ int tnpheap_commit(int npheap_dev, int tnpheap_dev)
     struct transaction_node *tmp = head;
 	struct tnpheap_cmd cmd;
 
+    int nodes = 0;
+    int match = 0;
+
     if(tmp == NULL)
         return 1;
 
@@ -204,53 +207,43 @@ int tnpheap_commit(int npheap_dev, int tnpheap_dev)
         __u64 version = tnpheap_get_version(npheap_dev, tnpheap_dev, cmd.offset);
 
         if(cmd.version == version){
-
-            //memcpy((char *)tmp->kmem_ptr, tmp->buffer, tmp->size);
-            npheap_lock(npheap_dev,cmd.offset);
-            void *ptr = npheap_alloc(npheap_dev, cmd.offset, tmp->size);
-            /*if(sprintf((char *)ptr, "%s",tmp->buffer) <= 0){
-                fprintf(stdout,"error writing to npheap\n");
-                pthread_mutex_unlock(&lock);
-                pthread_mutex_destroy(&lock);
-                npheap_unlock(npheap_dev,cmd.offset);
-                return 1;
-            }*/
-            
-            /*fprintf(stdout,"memset");
-            memset((char *)ptr, 0, tmp->size);
-            fprintf(stdout,"memcpy");*/
-            memcpy((char *)ptr, tmp->buffer, tmp->size);
-            /*if (copy_from_user(ptr, tmp->buffer, tmp->size) != 0){
-                return -EFAULT;
-            }*/
-            fprintf(stdout,"done\n");
-            npheap_unlock(npheap_dev,cmd.offset);
-            __u64 commit = ioctl(tnpheap_dev, TNPHEAP_IOCTL_COMMIT, &cmd);
-
-            if(commit == 1){
-
-                memset((char *)ptr, 0, tmp->size);
-                pthread_mutex_unlock(&lock);
-                //pthread_mutex_destroy(&lock);
-                return 1;
-            }
-
-           // head = NULL;
-            fprintf(stdout, "Commit Successful\n");
-            //pthread_mutex_unlock(&lock);
-            //pthread_mutex_destroy(&lock);
-            //return 0;
-
-
+            match++;
         }
 
         tmp = tmp->next;
-        /*__u64 commit = ioctl(tnpheap_dev, TNPHEAP_IOCTL_COMMIT, &cmd);
+        nodes++;
+    }
+    tmp = head;
+    
+    if(match == nodes && match > 0){
+        while(tmp != NULL){
+            
+                npheap_lock(npheap_dev,cmd.offset);
+                void *ptr = npheap_alloc(npheap_dev, cmd.offset, cmd.size);
+               
+                memcpy((char *)ptr, tmp->buffer, tmp->size);
+                
+                fprintf(stdout,"done\n");
+                npheap_unlock(npheap_dev,cmd.offset);
 
-        if(commit == 1) {
-            fprintf(stderr, "kernel sent 1 as commit message\n");
-            return commit;
-        }*/
+                 __u64 commit = ioctl(tnpheap_dev, TNPHEAP_IOCTL_COMMIT, &cmd);
+
+                if(commit == 1){
+
+                    memset((char *)ptr, 0, tmp->size);
+                    pthread_mutex_unlock(&lock);
+                    return 1;
+                }
+
+                fprintf(stdout, "Commit Successful\n");
+                tmp = tmp->next;
+        }
+
+    }
+    else{
+        fprintf(stdout,"version mismatch\n");
+        pthread_mutex_unlock(&lock);
+        return 1;
     }
     //head = NULL;
     pthread_mutex_unlock(&lock);

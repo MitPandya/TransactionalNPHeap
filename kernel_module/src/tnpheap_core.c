@@ -127,7 +127,7 @@ __u64 tnpheap_start_tx(struct tnpheap_cmd __user *user_cmd)
 
 __u64 tnpheap_commit(struct tnpheap_cmd __user *user_cmd)
 {
-    printk("inside commit");
+    printk("inside commit\n");
     mutex_lock(&lock);
     struct tnpheap_cmd cmd;
     __u64 ret=0;
@@ -155,7 +155,7 @@ __u64 tnpheap_commit(struct tnpheap_cmd __user *user_cmd)
         list_replace(&(node->list),&(tmp->list));
 
         kfree(node);
-        printk("Commit success");
+        printk("Commit success\n");
         mutex_unlock(&lock);
         return 0;
     }
