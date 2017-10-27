@@ -156,7 +156,7 @@ void *tnpheap_alloc(int npheap_dev, int tnpheap_dev, __u64 offset, __u64 size)
 
     //tmp->kmem_ptr = ptr;
     tmp->size = aligned_size;
-    tmp->buffer = (char *)malloc(sizeof(aligned_size));
+    tmp->buffer = (char *)calloc(sizeof(aligned_size));
 
     if(tmp->buffer == NULL){
         fprintf(stderr,"error in user malloc\n");
