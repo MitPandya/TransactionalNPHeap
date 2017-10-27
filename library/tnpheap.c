@@ -31,7 +31,7 @@ __u64 global_version = 0;
 
 int insert_list(__u64 version, __u64 offset) {
     if(head == NULL) {
-        head = (struct transaction_node*)calloc(sizeof(struct transaction_node));
+        head = (struct transaction_node*)malloc(sizeof(struct transaction_node));
         if(head == NULL){
             fprintf(stdout,"error in malloc, node creation failed\n");
             return -1;
@@ -53,7 +53,7 @@ int insert_list(__u64 version, __u64 offset) {
         tmp = tmp->next;
     }
 
-    struct transaction_node* next_node = (struct transaction_node*)calloc(sizeof(struct transaction_node));
+    struct transaction_node* next_node = (struct transaction_node*)malloc(sizeof(struct transaction_node));
     if(next_node == NULL){
         fprintf(stdout,"error in malloc, node creation failed\n");
         return -1;
@@ -156,7 +156,7 @@ void *tnpheap_alloc(int npheap_dev, int tnpheap_dev, __u64 offset, __u64 size)
 
     //tmp->kmem_ptr = ptr;
     tmp->size = aligned_size;
-    tmp->buffer = (char *)calloc(sizeof(aligned_size));
+    tmp->buffer = (char *)calloc(1, sizeof(aligned_size));
 
     if(tmp->buffer == NULL){
         fprintf(stderr,"error in user malloc\n");
