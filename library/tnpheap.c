@@ -215,8 +215,10 @@ int tnpheap_commit(int npheap_dev, int tnpheap_dev)
                 npheap_lock(npheap_dev,cmd.offset);
                 void *ptr = npheap_alloc(npheap_dev, cmd.offset, cmd.size);
 
-                if(memcmp((char *) ptr, tmp->buffer, tmp->size) != 0){
-                    fprintf(stdout,"write to k memory %llu\n",cmd.offset);
+                int cmp = memcmp((char *) ptr, tmp->buffer, tmp->size);
+
+                if(cmp != 0){
+                    fprintf(stdout,"write to k memory %llu %d\n",cmd.offset,cmp);
 
                     memset((char *)ptr, 0, tmp->size);
                     memcpy((char *)ptr, tmp->buffer, tmp->size);
