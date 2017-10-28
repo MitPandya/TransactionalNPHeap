@@ -61,7 +61,7 @@ int main(int argc, char *argv[])
 // Generate input data 
     srand((int)time(NULL)+(int)getpid());
     data_array = (struct data_array_element *)calloc(number_of_objects*2, sizeof(struct data_array_element));
-    for(i = 0; i < 2*number_of_objects; i++)
+    for(i = 0; i < number_of_objects; i++)
     {
         object_id = rand()%(number_of_objects*2);
         while(size == 0 || size <= 10)
