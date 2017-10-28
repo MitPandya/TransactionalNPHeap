@@ -96,7 +96,6 @@ int main(int argc, char *argv[])
             memcpy(mapped_data, data_array[i].data, data_array[i].size);
         }
     }
-    exit(1);
     COMMIT(npheap_dev, tnpheap_dev);
     gettimeofday(&current_time,NULL);
     msec_time = current_time.tv_usec + current_time.tv_sec*10^6;
