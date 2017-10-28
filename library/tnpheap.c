@@ -25,7 +25,7 @@ struct transaction_node {
 pthread_mutex_t lock;
 
 
-struct transaction_node *head;
+struct transaction_node *head = NULL;
 
 __u64 global_version = 0;
 
@@ -184,6 +184,7 @@ __u64 tnpheap_start_tx(int npheap_dev, int tnpheap_dev)
 
 int tnpheap_commit(int npheap_dev, int tnpheap_dev)
 {
+    print_list();
     fprintf(stdout,"inside commit\n");
     pthread_mutex_lock(&lock);
     struct transaction_node *tmp = head;
@@ -236,7 +237,7 @@ int tnpheap_commit(int npheap_dev, int tnpheap_dev)
 
     }
     else{
-        fprintf(stdout,"version mismatch\n");
+        fprintf(stdout,"version mismatch %d %d\n",nodes,match);
         pthread_mutex_unlock(&lock);
         return 1;
     }
