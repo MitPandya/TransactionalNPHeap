@@ -242,5 +242,6 @@ int tnpheap_commit(int npheap_dev, int tnpheap_dev)
     //head = NULL;
     pthread_mutex_unlock(&lock);
     //pthread_mutex_destroy(&lock);
+    fprintf(stdout,"all commit should exit\n");
     return 0;
 }
