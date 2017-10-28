@@ -133,6 +133,7 @@ int tnpheap_handler(int sig, siginfo_t *si)
 
 void *tnpheap_alloc(int npheap_dev, int tnpheap_dev, __u64 offset, __u64 size)
 {
+    pthread_mutex_lock(&lock);
     fprintf(stdout,"inside alloc offset is %llu\n",offset);
 
     __u64 version = tnpheap_get_version(npheap_dev, tnpheap_dev, offset);
@@ -141,18 +142,10 @@ void *tnpheap_alloc(int npheap_dev, int tnpheap_dev, __u64 offset, __u64 size)
 
     fprintf(stdout,"aligned size is %llu %llu\n",aligned_size,size);
 
-    //void *ptr = npheap_alloc(npheap_dev, offset, aligned_size);
-
-    /*if(ptr == NULL){
-        fprintf(stderr,"error in kmalloc\n");
-        return NULL;
-    }
-
-    fprintf(stdout,"size is %zu %zu \n", sizeof(ptr), sizeof(&ptr));*/
-
     struct transaction_node *tmp = find_list(offset);
     if(tmp == NULL){
         fprintf(stderr,"error in alloc\n");
+        pthread_mutex_unlock(&lock);
         return NULL;
     }
 
@@ -164,12 +157,14 @@ void *tnpheap_alloc(int npheap_dev, int tnpheap_dev, __u64 offset, __u64 size)
 
     if(tmp->buffer == NULL){
         fprintf(stderr,"error in user malloc\n");
+        pthread_mutex_unlock(&lock);
         return NULL;
     }
 
     fprintf(stdout,"usable size is %llu\n",malloc_usable_size(tmp->buffer));
     memset(tmp->buffer, 0, tmp->size);
     fprintf(stdout,"exit alloc\n");
+    pthread_mutex_unlock(&lock);
     return tmp->buffer;
 }
 
