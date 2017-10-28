@@ -214,7 +214,7 @@ int tnpheap_commit(int npheap_dev, int tnpheap_dev)
                 cmd.version = tmp->version;
                 npheap_lock(npheap_dev,cmd.offset);
                 void *ptr = npheap_alloc(npheap_dev, cmd.offset, cmd.size);
-               
+                memset((char *)ptr, 0, tmp->size);
                 memcpy((char *)ptr, tmp->buffer, tmp->size);
                 
                 fprintf(stdout,"done\n");
