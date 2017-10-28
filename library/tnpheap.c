@@ -197,12 +197,9 @@ int tnpheap_commit(int npheap_dev, int tnpheap_dev)
         return 1;
 
     while(tmp != NULL) {
-        cmd.offset = tmp->offset;
-        cmd.version = tmp->version;
+        __u64 version = tnpheap_get_version(npheap_dev, tnpheap_dev, tmp->offset);
 
-        __u64 version = tnpheap_get_version(npheap_dev, tnpheap_dev, cmd.offset);
-
-        if(cmd.version == version){
+        if(tmp->version == version){
             match++;
         }
 
@@ -213,7 +210,8 @@ int tnpheap_commit(int npheap_dev, int tnpheap_dev)
     
     if(match == nodes && match > 0){
         while(tmp != NULL){
-            
+                cmd.offset = tmp->offset;
+                cmd.version = tmp->version;
                 npheap_lock(npheap_dev,cmd.offset);
                 void *ptr = npheap_alloc(npheap_dev, cmd.offset, cmd.size);
                
