@@ -216,22 +216,27 @@ int tnpheap_commit(int npheap_dev, int tnpheap_dev)
                 void *ptr = npheap_alloc(npheap_dev, cmd.offset, cmd.size);
 
                 if(memcmp((char *) ptr, tmp->buffer, tmp->size) != 0){
+                    fprintf(stdout,"write to k memory %llu\n",cmd.offset);
+
                     memset((char *)ptr, 0, tmp->size);
-                    memcpy((char *)ptr, tmp->buffer, tmp->size);    
-                }                
+                    memcpy((char *)ptr, tmp->buffer, tmp->size);
+
+                    npheap_unlock(npheap_dev,cmd.offset); 
+
+                     __u64 commit = ioctl(tnpheap_dev, TNPHEAP_IOCTL_COMMIT, &cmd);
+
+                    if(commit == 1){
+
+                        memset((char *)ptr, 0, tmp->size);
+                        pthread_mutex_unlock(&lock);
+                        return 1;
+                    }   
+                }else{
+                    npheap_unlock(npheap_dev,cmd.offset);
+                    fprintf(stdout,"same value in memory %llu\n",cmd.offset);
+                }           
                 
                 fprintf(stdout,"done\n");
-                npheap_unlock(npheap_dev,cmd.offset);
-
-                 __u64 commit = ioctl(tnpheap_dev, TNPHEAP_IOCTL_COMMIT, &cmd);
-
-                if(commit == 1){
-
-                    memset((char *)ptr, 0, tmp->size);
-                    pthread_mutex_unlock(&lock);
-                    return 1;
-                }
-
                 fprintf(stdout, "Commit Successful\n");
                 tmp = tmp->next;
         }
