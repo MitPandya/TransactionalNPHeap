@@ -96,7 +96,7 @@ __u64 tnpheap_get_version(struct tnpheap_cmd __user *user_cmd)
     struct tnpheap_cmd cmd;
     if (copy_from_user(&cmd, user_cmd, sizeof(cmd)))
     {
-        mutex_unlock(&lock);
+        //mutex_unlock(&lock);
         return -1 ;
     }
     struct linked_list *node = find_node(cmd.offset);
@@ -126,7 +126,7 @@ __u64 tnpheap_start_tx(struct tnpheap_cmd __user *user_cmd)
 
 __u64 tnpheap_commit(struct tnpheap_cmd __user *user_cmd)
 {
-    printk("inside commit\n");
+    printk(KERN_INFO "inside commit\n");
     //mutex_lock(&lock);
     struct tnpheap_cmd cmd;
     __u64 ret=0;
@@ -154,11 +154,11 @@ __u64 tnpheap_commit(struct tnpheap_cmd __user *user_cmd)
         list_replace(&(node->list),&(tmp->list));
 
         kfree(node);
-        printk("Commit success\n");
+        printk(KERN_INFO "Commit success\n");
         //mutex_unlock(&lock);
         return 0;
     }
-    printk("Commit error");
+    printk(KERN_INFO "Commit error");
     //mutex_unlock(&lock);
     return 1;
 }
