@@ -247,7 +247,7 @@ int tnpheap_commit(int npheap_dev, int tnpheap_dev)
                 free(tmp_ptr);
 
                 if(cmp != 0){
-                    fprintf(stdout,"write to k memory %llu %d\n",cmd.offset,cmp);
+                    fprintf(stdout,"write to k memory data is %llu %d %.8s %llu\n",cmd.offset,cmp,tmp->buffer,curr_transaction_id);
 
                     memset((char *)ptr, 0, tmp->size);
                     memcpy((char *)ptr, tmp->buffer, tmp->size);
