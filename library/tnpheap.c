@@ -101,7 +101,7 @@ void print_list() {
 }
 
 void free_list(){
-    fpriintf(stdout,"inside free list\n");
+    fprintf(stdout,"inside free list\n");
     if(head == NULL){
         fprintf(stderr,"list is empty, inside free_list\n");
     }
@@ -112,7 +112,7 @@ void free_list(){
         tmp = tmp->next;
         free(curr);
     }
-    fpriintf(stdout,"done free list\n");
+    fprintf(stdout,"done free list\n");
 
 }
 
