@@ -25,6 +25,8 @@ struct transaction_node {
 pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
 
 
+__u64 curr_transaction_id = -1;
+
 struct transaction_node *head = NULL;
 
 __u64 global_version = 0;
@@ -197,7 +199,7 @@ __u64 tnpheap_start_tx(int npheap_dev, int tnpheap_dev)
         return -1;
     }
     lock_initialized = 0;*/
- 
+    curr_transaction_id = transaction_id;
 	return transaction_id;
 }
 
@@ -205,7 +207,7 @@ int tnpheap_commit(int npheap_dev, int tnpheap_dev)
 {
     print_list();
     npheap_lock(npheap_dev,tnpheap_dev);
-    fprintf(stdout,"inside commit\n");
+    fprintf(stdout,"inside commit , transaction is %llu\n",curr_transaction_id);
     //pthread_mutex_lock(&lock);
     struct transaction_node *tmp = head;
 	struct tnpheap_cmd cmd;
@@ -285,6 +287,6 @@ int tnpheap_commit(int npheap_dev, int tnpheap_dev)
     npheap_unlock(npheap_dev,tnpheap_dev); 
     //pthread_mutex_unlock(&lock);
     //pthread_mutex_destroy(&lock);
-    fprintf(stdout,"all commit should exit\n");
+    fprintf(stdout,"all commit should exit tramsaction %llu\n",curr_transaction_id);
     return 0;
 }

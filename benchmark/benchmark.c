@@ -80,7 +80,7 @@ int main(int argc, char *argv[])
     }
 
     START_TX(npheap_dev, tnpheap_dev);
-    fprintf(stdout,"start tx %d\n",pid);
+    fprintf(stdout,"start tx %d\n",(int)getpid());
     for(i = 0; i < number_of_objects*2; i++)
     {
         if(data_array[i].size)
@@ -96,9 +96,9 @@ int main(int argc, char *argv[])
             memcpy(mapped_data, data_array[i].data, data_array[i].size);
         }
     }
-    fprintf(stdout,"commit tx %d\n", pid);
+    fprintf(stdout,"commit tx %d\n", (int)getpid());
     COMMIT(npheap_dev, tnpheap_dev);
-    fprintf(stdout,"final exit %d\n",pid);
+    fprintf(stdout,"final exit %d\n",(int)getpid());
     gettimeofday(&current_time,NULL);
     msec_time = current_time.tv_usec + current_time.tv_sec*10^6;
 
