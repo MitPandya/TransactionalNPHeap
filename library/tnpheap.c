@@ -206,7 +206,7 @@ __u64 tnpheap_start_tx(int npheap_dev, int tnpheap_dev)
 int tnpheap_commit(int npheap_dev, int tnpheap_dev)
 {
     //print_list();
-    npheap_lock(npheap_dev,tnpheap_dev);
+    npheap_lock(npheap_dev,curr_transaction_id);
     fprintf(stdout,"inside commit , transaction is %llu\n",curr_transaction_id);
     //pthread_mutex_lock(&lock);
     struct transaction_node *tmp = head;
@@ -258,7 +258,7 @@ int tnpheap_commit(int npheap_dev, int tnpheap_dev)
 
                         memset((char *)ptr, 0, tmp->size);
                         //pthread_mutex_unlock(&lock);
-                        npheap_unlock(npheap_dev,tnpheap_dev); 
+                        npheap_unlock(npheap_dev,curr_transaction_id); 
                         return 1;
                     }
 
@@ -279,12 +279,12 @@ int tnpheap_commit(int npheap_dev, int tnpheap_dev)
         fprintf(stderr,"version mismatch %d %d transaction is %llu\n",nodes, match, curr_transaction_id);
         //pthread_mutex_unlock(&lock);
         free_list();
-        npheap_unlock(npheap_dev,tnpheap_dev); 
+        npheap_unlock(npheap_dev,curr_transaction_id); 
         return 1;
     }
     //head = NULL;
     free_list();
-    npheap_unlock(npheap_dev,tnpheap_dev); 
+    npheap_unlock(npheap_dev,curr_transaction_id); 
     //pthread_mutex_unlock(&lock);
     //pthread_mutex_destroy(&lock);
     fprintf(stdout,"all commit should exit transaction %llu\n",curr_transaction_id);
