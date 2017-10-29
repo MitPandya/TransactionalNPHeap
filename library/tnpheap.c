@@ -105,12 +105,11 @@ void free_list(){
     if(head == NULL){
         fprintf(stderr,"list is empty, inside free_list\n");
     }
-    struct transaction_node* tmp = head;
-    struct transaction_node* curr = NULL;
-    while(tmp != NULL) {
-        curr = tmp;
-        tmp = tmp->next;
-        free(curr);
+    struct transaction_node* tmp;
+    while(head != NULL) {
+        tmp = head;
+        head = head->next;
+        free(tmp);
     }
     fprintf(stdout,"done free list\n");
 
@@ -140,7 +139,7 @@ __u64 tnpheap_get_version(int npheap_dev, int tnpheap_dev, __u64 offset)
 
 int tnpheap_handler(int sig, siginfo_t *si)
 {
-    fprintf(stdout,"Inside TNPHeap Handler sig: %d, error_no: %d, pid: %d\n\n", sig, si->si_errno, getpid());
+    fprintf(stderr,"Inside TNPHeap Handler sig: %d, error_no: %d, pid: %d\n\n", sig, si->si_errno, getpid());
 
     signal(sig, SIGSEGV);
     kill(getpid(), 9);
