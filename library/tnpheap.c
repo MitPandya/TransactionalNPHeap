@@ -140,7 +140,7 @@ __u64 tnpheap_get_version(int npheap_dev, int tnpheap_dev, __u64 offset)
 
 int tnpheap_handler(int sig, siginfo_t *si)
 {
-    printf("Inside TNPHeap Handler sig: %d, error_no: %d, pid: %d\n\n", sig, si->si_errno, getpid());
+    fprintf(stdout,"Inside TNPHeap Handler sig: %d, error_no: %d, pid: %d\n\n", sig, si->si_errno, getpid());
 
     signal(sig, SIGSEGV);
     kill(getpid(), 9);
