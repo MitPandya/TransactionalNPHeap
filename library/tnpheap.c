@@ -111,6 +111,7 @@ void free_list(){
         head = head->next;
         free(tmp);
     }
+    head = NULL;
     fprintf(stdout,"done free list\n");
 
 }
@@ -234,7 +235,7 @@ int tnpheap_commit(int npheap_dev, int tnpheap_dev)
                 cmd.offset = tmp->offset;
                 cmd.version = tmp->version;
                 
-                void *ptr = npheap_alloc(npheap_dev, cmd.offset, tmp->size);
+                void *ptr = npheap_alloc(npheap_dev, cmd.offset, 8192); //tmp->size
 
                 void *tmp_ptr = (char *)malloc(tmp->size);
                 memset(tmp_ptr,0,tmp->size);
