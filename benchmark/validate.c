@@ -7,7 +7,6 @@
 #include <sys/mman.h>
 #include <unistd.h>
 #include <string.h>
-#include <linux/types.h>
 
 int main(int argc, char *argv[])
 {
@@ -26,8 +25,8 @@ int main(int argc, char *argv[])
         exit(1);
     }
     number_of_objects = atoi(argv[1]);
-    obj = (char **)malloc(2*number_of_objects*sizeof(char *));
-    for(i = 0; i < 2*number_of_objects; i++)
+    obj = (char **)malloc(number_of_objects*sizeof(char *)*2);
+    for(i = 0; i < number_of_objects*2; i++)
     {
         obj[i] = (char *)calloc(8192, sizeof(char));
     }
@@ -71,7 +70,7 @@ int main(int argc, char *argv[])
         {
             if(strcmp(mapped_data,obj[i])!=0)
             {
-                fprintf(stderr, "Object %d (size %llu) has a wrong value %.8s v.s. %.8s\n",i,size,mapped_data,obj[i]);
+                fprintf(stderr, "Object %d (size %llu) has a wrong value %s v.s. %s\n",i,size,mapped_data,obj[i]);
                 error++;
             }
         }
@@ -81,4 +80,3 @@ int main(int argc, char *argv[])
     close(devfd);
     return 0;
 }
-

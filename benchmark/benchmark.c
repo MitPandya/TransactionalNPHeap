@@ -100,7 +100,7 @@ int main(int argc, char *argv[])
     COMMIT(npheap_dev, tnpheap_dev);
     fprintf(stdout,"final exit %d\n",(int)getpid());
     gettimeofday(&current_time,NULL);
-    msec_time = current_time.tv_usec + current_time.tv_sec*10^6;
+    msec_time = current_time.tv_usec + current_time.tv_sec*1000000;
 
     // print commit log
     pid=(int)getpid();
@@ -134,4 +134,3 @@ int main(int argc, char *argv[])
     exit(0);
     return 0;
 }
-
