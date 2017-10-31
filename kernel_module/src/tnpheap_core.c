@@ -129,7 +129,7 @@ __u64 tnpheap_commit(struct tnpheap_cmd __user *user_cmd)
     printk(KERN_INFO "inside commit\n");
     //mutex_lock(&lock);
     struct tnpheap_cmd cmd;
-    __u64 ret=0;
+    //__u64 ret=0;
     if (copy_from_user(&cmd, user_cmd, sizeof(cmd)))
     {
         //mutex_unlock(&lock);
@@ -138,7 +138,7 @@ __u64 tnpheap_commit(struct tnpheap_cmd __user *user_cmd)
     struct linked_list* node = find_node(cmd.offset);
     if(node == NULL) {
         //node not found
-        printk(KERN_ERR "Node not found! %zu\n", cmd.offset);
+        printk(KERN_ERR "Node not found! %llu\n", cmd.offset);
         //mutex_unlock(&lock);
         return 1;
     }

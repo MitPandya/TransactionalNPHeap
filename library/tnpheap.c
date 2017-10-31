@@ -111,6 +111,8 @@ void free_list(){
     while(head != NULL) {
         tmp = head;
         head = head->next;
+        if(tmp->buffer != NULL)
+            free(tmp->buffer);
         free(tmp);
     }
     head = NULL;
@@ -250,7 +252,7 @@ int tnpheap_commit(int npheap_dev, int tnpheap_dev)
                 free(tmp_ptr);
 
                 if(cmp != 0){
-                    fprintf(stdout,"write to k memory data is %llu %d %.8s %llu\n",cmd.offset,cmp,tmp->buffer,curr_transaction_id);
+                    fprintf(stdout,"write to k memory data is %llu %d %.8s %llu %llu\n",cmd.offset,cmp,tmp->buffer,curr_transaction_id,tmp->size);
 
                     memset((char *)ptr, 0, tmp->size);
                     memcpy((char *)ptr, tmp->buffer, tmp->size);
