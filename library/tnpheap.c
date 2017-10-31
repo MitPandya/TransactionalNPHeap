@@ -168,7 +168,8 @@ void *tnpheap_alloc(int npheap_dev, int tnpheap_dev, __u64 offset, __u64 size)
         //pthread_mutex_unlock(&lock);
         return NULL;
     }
-
+    if(tmp->buffer != NULL)
+        free(tmp->buffer);
     //tmp->kmem_ptr = ptr;
     if(aligned_size != 0)
         tmp->size = aligned_size;
