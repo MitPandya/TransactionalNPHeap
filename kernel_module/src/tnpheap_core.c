@@ -1,3 +1,4 @@
+//// Project 2: Mitkumar Pandya, mhpandya; Rachit Shrivastava, rshriva; Yash Vora, yvora;
 //////////////////////////////////////////////////////////////////////
 //                             North Carolina State University
 //
@@ -48,6 +49,7 @@
 
 struct miscdevice tnpheap_dev;
 
+// Create a mutex lock
 DEFINE_MUTEX(lock);
 
 __u64 transaction_id = 0;
@@ -61,6 +63,8 @@ struct linked_list{
 
 struct linked_list linkedList;
 
+// Method to add a node in kernel linked list
+// https://isis.poly.edu/kulesh/stuff/src/klist/
 struct linked_list* add_node(__u64 offset){
     struct linked_list *tmp;
     /* adding elements to list */
@@ -73,6 +77,8 @@ struct linked_list* add_node(__u64 offset){
     return tmp;
 }
 
+// Method to find a node in kernel linked list based on Offset
+// https://isis.poly.edu/kulesh/stuff/src/klist/
 struct linked_list* find_node(__u64 offset) {
     struct linked_list *tmp;
     struct list_head *pos, *q;
@@ -87,8 +93,8 @@ struct linked_list* find_node(__u64 offset) {
     return NULL;
 }
 
-
-
+// Method to get version of a node based on offset from kernel linked list
+// https://isis.poly.edu/kulesh/stuff/src/klist/
 __u64 tnpheap_get_version(struct tnpheap_cmd __user *user_cmd)
 {
     printk("inside get version\n");
@@ -110,6 +116,7 @@ __u64 tnpheap_get_version(struct tnpheap_cmd __user *user_cmd)
     return node->version;
 }
 
+// Method to start a trasaction
 __u64 tnpheap_start_tx(struct tnpheap_cmd __user *user_cmd)
 {
     struct tnpheap_cmd cmd;
@@ -124,6 +131,7 @@ __u64 tnpheap_start_tx(struct tnpheap_cmd __user *user_cmd)
     return transaction_id;
 }
 
+// Method to update version of a node which gets committed
 __u64 tnpheap_commit(struct tnpheap_cmd __user *user_cmd)
 {
     printk(KERN_INFO "inside commit\n");

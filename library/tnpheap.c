@@ -1,3 +1,4 @@
+//// Project 2: Mitkumar Pandya, mhpandya; Rachit Shrivastava, rshriva; Yash Vora, yvora;
 #include <npheap/tnpheap_ioctl.h>
 #include <npheap/npheap.h>
 #include <npheap.h>
@@ -22,7 +23,7 @@ struct transaction_node {
     struct transaction_node* next;
 };
 
-pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
+//pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
 
 
 __u64 curr_transaction_id = -1;
@@ -31,6 +32,7 @@ struct transaction_node *head = NULL;
 
 __u64 global_version = 0;
 
+// Method to add a node to a list
 int insert_list(__u64 version, __u64 offset) {
     if(head == NULL) {
         head = (struct transaction_node*)malloc(sizeof(struct transaction_node));
@@ -57,7 +59,7 @@ int insert_list(__u64 version, __u64 offset) {
 
     struct transaction_node* next_node = (struct transaction_node*)malloc(sizeof(struct transaction_node));
     if(next_node == NULL){
-        fprintf(stdout,"error in malloc, node creation failed\n");
+        fprintf(stderr,"error in malloc, node creation failed\n");
         return -1;
     }
     next_node->offset = offset;
@@ -73,6 +75,8 @@ int insert_list(__u64 version, __u64 offset) {
     return 1;
 }
 
+
+// Method to find a node in the list based on Offset
 struct transaction_node* find_list(__u64 offset) {
     //print_list(); 
     if(head == NULL){
@@ -90,7 +94,7 @@ struct transaction_node* find_list(__u64 offset) {
     //failed - not found
     return NULL;
 }
-
+// Method to print user space linked list
 void print_list() {
     if(head == NULL){
         fprintf(stderr,"list is empty, inside print_list\n");
@@ -102,6 +106,7 @@ void print_list() {
     }
 }
 
+// Method to iterate and free the nodes of user space list
 void free_list(){
     fprintf(stdout,"inside free list\n");
     if(head == NULL){
@@ -120,6 +125,8 @@ void free_list(){
 
 }
 
+// Method to get version of the node identified by offset from the kernel
+// also adds a node if it does not exist
 __u64 tnpheap_get_version(int npheap_dev, int tnpheap_dev, __u64 offset)
 {
     //pthread_mutex_lock(&lock);
@@ -141,7 +148,7 @@ __u64 tnpheap_get_version(int npheap_dev, int tnpheap_dev, __u64 offset)
 }
 
 
-
+// Handler which kills a process on segfault, should not come here
 int tnpheap_handler(int sig, siginfo_t *si)
 {
     fprintf(stderr,"Inside TNPHeap Handler sig: %d, error_no: %d, pid: %d\n\n", sig, si->si_errno, getpid());
@@ -152,7 +159,7 @@ int tnpheap_handler(int sig, siginfo_t *si)
     return 0;
 }
 
-
+// Method to allocate user buffer data based on size and offset
 void *tnpheap_alloc(int npheap_dev, int tnpheap_dev, __u64 offset, __u64 size)
 {
     //pthread_mutex_lock(&lock);
@@ -191,6 +198,7 @@ void *tnpheap_alloc(int npheap_dev, int tnpheap_dev, __u64 offset, __u64 size)
     return tmp->buffer;
 }
 
+// Method to start a transaction and returns a transaction id
 __u64 tnpheap_start_tx(int npheap_dev, int tnpheap_dev)
 {	
     struct tnpheap_cmd cmd;
@@ -206,6 +214,7 @@ __u64 tnpheap_start_tx(int npheap_dev, int tnpheap_dev)
 	return transaction_id;
 }
 
+// Method to commit a transaction, return 0 on success 1 on failure
 int tnpheap_commit(int npheap_dev, int tnpheap_dev)
 {
     //print_list();
